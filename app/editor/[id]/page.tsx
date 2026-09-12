@@ -34,40 +34,10 @@ export default async function EditorPage({
           <h1 className="text-xl font-semibold">{song.title}</h1>
           <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
         </header>
-        <div aria-label="Editor tools" className="flex flex-wrap gap-2">
-          <button
-            className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
-            disabled
-            type="button"
-          >
-            Transpose -
-          </button>
-          <button
-            className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
-            disabled
-            type="button"
-          >
-            Transpose +
-          </button>
-          <button
-            className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
-            disabled
-            type="button"
-          >
-            Size -
-          </button>
-          <button
-            className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
-            disabled
-            type="button"
-          >
-            Size +
-          </button>
-        </div>
         <label className="sr-only" htmlFor="song-editor">
           Song text
         </label>
-        <SongEditor songId={song.id} />
+        <SongEditor key={song.id} songId={song.id} />
       </div>
     </main>
   );

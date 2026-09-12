@@ -151,4 +151,7 @@ button. Add scrolling to search page SongItem list.
 
 ## v0.5
 
-Editor buttons, autoselect, autosave.
+Editor buttons, autoselect, autosave. Transpose buttons are
+disabled. Font size buttons work. DB seeding only concludes
+if DB is empty. Font size range is 12px to 32px, starting at 
+16px.

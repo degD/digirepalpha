@@ -131,9 +131,12 @@ execution.
 
 Next.js installed. Develop search page demo with its buttons.
 
-## v0.2 
+## v0.2 [COMPLETE]
 
 SongItem and database. Storing on web uses localStorage.
+Implement load and save functions and unit tests. 
+SongData object is a list of SongData, and will hold
+the song store. Run tests with `bun test`.
 
 ## v0.3 
 

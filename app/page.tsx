@@ -1,6 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+import { demoSongData } from "../lib/demo-song-data";
+import { saveSongData } from "../lib/song-data";
+
 export default function Home() {
+  useEffect(() => {
+    saveSongData(demoSongData);
+  }, []);
+
   return (
     <main className="min-h-screen bg-white text-zinc-950">
       <header className="border-b border-zinc-200">
@@ -34,7 +42,14 @@ export default function Home() {
         </div>
       </header>
       <section className="mx-auto max-w-4xl px-4 py-8" aria-label="Song results">
-        <p className="text-sm text-zinc-600">Your matching songs will appear here.</p>
+        <ul className="divide-y divide-zinc-200">
+          {demoSongData.map((song) => (
+            <li className="py-3" key={song.id}>
+              <strong className="block">{song.title}</strong>
+              <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
+            </li>
+          ))}
+        </ul>
       </section>
     </main>
   );

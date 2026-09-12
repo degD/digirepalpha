@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { demoSongData } from "../lib/demo-song-data";
 import { saveSongData } from "../lib/song-data";
 import { searchSongs } from "../lib/song-search";
@@ -54,9 +55,14 @@ export default function Home() {
         ) : (
           <ul className="divide-y divide-zinc-200">
             {matchingSongs.map((song) => (
-              <li className="py-3" key={song.id}>
-                <strong className="block">{song.title}</strong>
-                <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
+              <li key={song.id}>
+                <Link
+                  className="block rounded py-3 outline-none hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                  href={`/editor/${song.id}`}
+                >
+                  <strong className="block">{song.title}</strong>
+                  <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
+                </Link>
               </li>
             ))}
           </ul>

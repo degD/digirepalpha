@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { demoSongData } from "../lib/demo-song-data";
-import { saveSongData } from "../lib/song-data";
+import { initializeSongData } from "../lib/song-data";
 import { searchSongs } from "../lib/song-search";
 
 export default function Home() {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    saveSongData(demoSongData);
+    initializeSongData(demoSongData);
   }, []);
 
   const matchingSongs = searchSongs(demoSongData, query);

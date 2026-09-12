@@ -68,3 +68,29 @@ export function saveSongData(
 
   storage.setItem(SONG_DATA_STORAGE_KEY, JSON.stringify(songData));
 }
+
+export function initializeSongData(
+  initialSongData: SongData,
+  storage = getBrowserStorage(),
+): SongData {
+  if (!storage) {
+    return [];
+  }
+
+  if (storage.getItem(SONG_DATA_STORAGE_KEY) === null) {
+    saveSongData(initialSongData, storage);
+    return initialSongData;
+  }
+
+  return loadSongData(storage);
+}
+
+export function updateSongText(
+  songData: SongData,
+  songId: number,
+  text: string,
+): SongData {
+  return songData.map((song) =>
+    song.id === songId ? { ...song, song: text } : song,
+  );
+}

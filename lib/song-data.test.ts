@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  initializeSongData,
   loadSongData,
   saveSongData,
   SONG_DATA_STORAGE_KEY,
   type SongData,
   type SongStorage,
+  updateSongText,
 } from "./song-data";
 
 const songs: SongData = [
@@ -91,5 +93,38 @@ describe("song data storage", () => {
     };
 
     assert.throws(() => saveSongData(songs, storage), /Write failed/);
+  });
+
+  it("seeds a missing database once", () => {
+    const storage = createStorage();
+
+    assert.deepEqual(initializeSongData(songs, storage), songs);
+    assert.deepEqual(loadSongData(storage), songs);
+  });
+
+  it("preserves an existing database during initialization", () => {
+    const storage = createStorage(JSON.stringify([]));
+
+    assert.deepEqual(initializeSongData(songs, storage), []);
+    assert.deepEqual(loadSongData(storage), []);
+  });
+
+  it("updates only the selected song text", () => {
+    const otherSong = {
+      id: 2,
+      title: "Other Song",
+      tags: ["rock"],
+      song: "Original lyrics",
+    };
+    const updatedSongs = updateSongText([...songs, otherSong], 1, "New lyrics");
+
+    assert.equal(updatedSongs[0].song, "New lyrics");
+    assert.equal(updatedSongs[0].title, songs[0].title);
+    assert.equal(updatedSongs[0].tags, songs[0].tags);
+    assert.deepEqual(updatedSongs[1], otherSong);
+  });
+
+  it("leaves song data unchanged for an unknown ID", () => {
+    assert.deepEqual(updateSongText(songs, 2, "New lyrics"), songs);
   });
 });

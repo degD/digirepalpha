@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { demoSongData } from "../../../lib/demo-song-data";
+import { SongEditor } from "./song-editor";
 
 export default async function EditorPage({
   params,
@@ -66,11 +67,7 @@ export default async function EditorPage({
         <label className="sr-only" htmlFor="song-editor">
           Song text
         </label>
-        <textarea
-          className="min-h-96 w-full resize-y rounded border border-zinc-300 p-3 outline-none focus:border-zinc-950"
-          id="song-editor"
-          placeholder="Write song text"
-        />
+        <SongEditor songId={song.id} />
       </div>
     </main>
   );

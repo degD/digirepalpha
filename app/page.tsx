@@ -16,8 +16,8 @@ export default function Home() {
   const matchingSongs = searchSongs(demoSongData, query);
 
   return (
-    <main className="min-h-screen bg-white text-zinc-950">
-      <header className="border-b border-zinc-200">
+    <main className="flex h-dvh flex-col bg-white text-zinc-950">
+      <header className="shrink-0 border-b border-zinc-200">
         <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
           <h1 className="text-lg font-semibold">DigiRep</h1>
           <label className="sr-only" htmlFor="song-search">
@@ -49,7 +49,10 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <section className="mx-auto max-w-4xl px-4 py-8" aria-label="Song results">
+      <section
+        className="mx-auto min-h-0 w-full max-w-4xl flex-1 overflow-y-auto px-4 py-8"
+        aria-label="Song results"
+      >
         {matchingSongs.length === 0 ? (
           <p className="text-sm text-zinc-600">No songs found.</p>
         ) : (

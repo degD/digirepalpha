@@ -143,9 +143,11 @@ the song store. Run tests with `bun test`.
 Add test SongItems to DB and display make search work.
 DB is hardcoded for demo purposes.
 
-## v0.4 
+## v0.4 [COMPLETE]
 
 Make tapping on SongItem open an empty text editor page.
+Display title and tags on editor page, and dislpay a `back`
+button. Add scrolling to search page SongItem list.
 
 ## v0.5
 

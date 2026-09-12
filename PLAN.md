@@ -138,9 +138,10 @@ Implement load and save functions and unit tests.
 SongData object is a list of SongData, and will hold
 the song store. Run tests with `bun test`.
 
-## v0.3 
+## v0.3 [COMPLETE]
 
 Add test SongItems to DB and display make search work.
+DB is hardcoded for demo purposes.
 
 ## v0.4 
 

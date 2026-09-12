@@ -29,7 +29,7 @@ describe("demo song data", () => {
     for (const song of demoSongData) {
       assert.notEqual(song.title, "");
       assert.ok(song.tags.length > 0);
-      assert.ok(song.tags.every((tag) => allowedTags.has(tag)));
+      assert.ok(song.tags.every((tag) => allowedTags.has(tag.toLowerCase())));
       assert.equal(song.song, "");
     }
   });

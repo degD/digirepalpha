@@ -127,7 +127,7 @@ Finally, Capacitor.js and a desktop bundler for cross platform
 execution.
 
 
-## v0.1
+## v0.1 [COMPLETE]
 
 Next.js installed. Develop search page demo with its buttons.
 

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { SongData } from "./song-data";
-import { searchSongs } from "./song-search";
+import type { SongData } from "../song-data";
+import { searchSongs } from "../song-search";
 
 const songs: SongData = [
   { id: 1, title: "Midnight Current", tags: ["jazz"], song: "" },

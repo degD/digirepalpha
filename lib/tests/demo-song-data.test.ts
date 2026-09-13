@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { demoSongData } from "./demo-song-data";
-import { loadSongData, saveSongData, type SongStorage } from "./song-data";
+import { demoSongData } from "../demo-song-data";
+import { loadSongData, saveSongData, type SongStorage } from "../song-data";
 
 function createStorage(): SongStorage {
   let value: string | null = null;

@@ -8,7 +8,7 @@ import {
   scanChordFormat,
   touchesHiddenMarker,
   unchordSelection,
-} from "./chord-format";
+} from "../chord-format";
 
 describe("chord format scanner", () => {
   it("finds ordinary, empty, and whitespace-containing chords", () => {

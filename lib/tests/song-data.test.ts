@@ -8,7 +8,7 @@ import {
   type SongData,
   type SongStorage,
   updateSongText,
-} from "./song-data";
+} from "../song-data";
 
 const songs: SongData = [
   {

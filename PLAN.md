@@ -165,9 +165,12 @@ rules are written above in the plan. Added chord library
 unit tests and playwright editor tests. Transpose still disabled.
 `bun test` for unit tests. `bun run test:e2e` for playwright tests.
 
-## v0.7 
+## v0.7 [COMPLETE]
 
 Fix bugs. Enable transpose. New song button. Long press to delete.
+New song button uses browser `alert` to display title prompt.
+If cursor at the beginning of a chord, transpose also selects the
+chord.
 
 ## v0.8 
 

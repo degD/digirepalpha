@@ -34,9 +34,6 @@ export default async function EditorPage({
           <h1 className="text-xl font-semibold">{song.title}</h1>
           <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
         </header>
-        <label className="sr-only" htmlFor="song-editor">
-          Song text
-        </label>
         <SongEditor key={song.id} songId={song.id} />
       </div>
     </main>

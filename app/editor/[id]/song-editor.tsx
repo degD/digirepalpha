@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { history, historyKeymap, standardKeymap } from "@codemirror/commands";
+import { Compartment, EditorState } from "@codemirror/state";
+import { EditorView, keymap } from "@codemirror/view";
+import { useEffect, useRef, useState } from "react";
 import { demoSongData } from "../../../lib/demo-song-data";
 import {
   initializeSongData,
@@ -8,27 +11,83 @@ import {
   updateSongText,
 } from "../../../lib/song-data";
 
+function editorTheme(fontSize: number) {
+  return EditorView.theme({
+    "&": {
+      minHeight: "24rem",
+      border: "1px solid var(--color-zinc-300)",
+      borderRadius: "0.25rem",
+    },
+    "&.cm-focused": { outline: "2px solid var(--color-zinc-950)", outlineOffset: "2px" },
+    ".cm-content": {
+      minHeight: "24rem",
+      padding: "0.75rem",
+      fontFamily: "inherit",
+      fontSize: `${fontSize}px`,
+    },
+    ".cm-scroller": { fontFamily: "inherit" },
+  });
+}
+
 export function SongEditor({ songId }: { songId: number }) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorContainerRef = useRef<HTMLDivElement>(null);
+  const editorViewRef = useRef<EditorView>(null);
+  const fontSizeCompartment = useRef(new Compartment());
   const [fontSize, setFontSize] = useState(16);
 
   useEffect(() => {
     const songData = initializeSongData(demoSongData);
     const song = songData.find((item) => item.id === songId);
 
-    if (textareaRef.current && song) {
-      textareaRef.current.value = song.song;
+    if (!editorContainerRef.current || !song) {
+      return;
     }
+
+    const editorView = new EditorView({
+      state: EditorState.create({
+        doc: song.song,
+        extensions: [
+          history(),
+          keymap.of([...standardKeymap, ...historyKeymap]),
+          EditorView.lineWrapping,
+          EditorView.contentAttributes.of({ "aria-label": "Song text" }),
+          fontSizeCompartment.current.of(editorTheme(16)),
+          EditorView.domEventObservers({
+            beforeinput: (event) => {
+              const inputEvent = event as InputEvent;
+
+              console.log({ inputType: inputEvent.inputType, data: inputEvent.data });
+              return false;
+            },
+          }),
+          EditorView.updateListener.of((update) => {
+            if (!update.docChanged) {
+              return;
+            }
+
+            const currentSongData = initializeSongData(demoSongData);
+            saveSongData(
+              updateSongText(currentSongData, songId, update.state.doc.toString()),
+            );
+          }),
+        ],
+      }),
+      parent: editorContainerRef.current,
+    });
+
+    editorViewRef.current = editorView;
+
+    return () => {
+      editorView.destroy();
+      editorViewRef.current = null;
+    };
   }, [songId]);
 
-  function handleInput(event: FormEvent<HTMLTextAreaElement>) {
-    const inputEvent = event.nativeEvent as InputEvent;
-    const text = event.currentTarget.value;
-    const songData = initializeSongData(demoSongData);
-
-    console.log({ inputType: inputEvent.inputType, data: inputEvent.data });
-    saveSongData(updateSongText(songData, songId, text));
-  }
+  useEffect(() => {
+    editorViewRef.current?.dispatch({
+      effects: fontSizeCompartment.current.reconfigure(editorTheme(fontSize)),
+    });
+  }, [fontSize]);
 
   return (
     <>
@@ -50,7 +109,7 @@ export function SongEditor({ songId }: { songId: number }) {
         <button
           className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
           disabled={fontSize === 12}
-          onClick={() => setFontSize(fontSize - 2)}
+          onClick={() => setFontSize((size) => size - 2)}
           type="button"
         >
           Size -
@@ -58,20 +117,13 @@ export function SongEditor({ songId }: { songId: number }) {
         <button
           className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
           disabled={fontSize === 32}
-          onClick={() => setFontSize(fontSize + 2)}
+          onClick={() => setFontSize((size) => size + 2)}
           type="button"
         >
           Size +
         </button>
       </div>
-      <textarea
-        className="min-h-96 w-full resize-y rounded border border-zinc-300 p-3 outline-none focus:border-zinc-950"
-        id="song-editor"
-        onInput={handleInput}
-        placeholder="Write song text"
-        ref={textareaRef}
-        style={{ fontSize }}
-      />
+      <div ref={editorContainerRef} />
     </>
   );
 }

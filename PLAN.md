@@ -172,9 +172,11 @@ New song button uses browser `alert` to display title prompt.
 If cursor at the beginning of a chord, transpose also selects the
 chord.
 
-## v0.8 
+## v0.8 [COMPLETE]
 
-Add data page.
+Add data page, implement importing and exporting. 
+Data page is a prototype and not the final design.
+Add E2E test to check.
 
 ## v0.9
 

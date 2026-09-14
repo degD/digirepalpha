@@ -178,9 +178,11 @@ Add data page, implement importing and exporting.
 Data page is a prototype and not the final design.
 Add E2E test to check.
 
-## v0.9
+## v0.9 [COMPLETE]
 
-Extensive E2E testing. High test coverage.
+Extensive E2E testing across Chromium and WebKit. Covers search, song
+creation and deletion, editor persistence and controls, routes, and complete
+database import and export workflows.
 
 ## v0.10
 

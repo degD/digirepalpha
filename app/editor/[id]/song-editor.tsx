@@ -5,6 +5,7 @@ import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
 import { chordEditor, chordProtectedEditing } from "../../../lib/chord-editor";
+import { chordifySelection } from "../../../lib/chord-format";
 import { demoSongData } from "../../../lib/demo-song-data";
 import {
   initializeSongData,
@@ -93,6 +94,35 @@ export function SongEditor({ songId }: { songId: number }) {
     });
   }, [fontSize]);
 
+  function handleChordify() {
+    const editorView = editorViewRef.current;
+
+    if (!editorView) {
+      return;
+    }
+
+    const source = editorView.state.doc.toString();
+    const selection = editorView.state.selection.main;
+    const transformation = chordifySelection(source, {
+      from: selection.from,
+      to: selection.to,
+    });
+
+    if (transformation.source === source) {
+      return;
+    }
+
+    editorView.dispatch({
+      changes: { from: 0, to: source.length, insert: transformation.source },
+      selection: {
+        anchor: transformation.selection.from,
+        head: transformation.selection.to,
+      },
+      userEvent: "input.chordify",
+    });
+    editorView.focus();
+  }
+
   return (
     <>
       <div aria-label="Editor tools" className="flex flex-wrap gap-2">
@@ -109,6 +139,13 @@ export function SongEditor({ songId }: { songId: number }) {
           type="button"
         >
           Transpose +
+        </button>
+        <button
+          className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          onClick={handleChordify}
+          type="button"
+        >
+          Chordify
         </button>
         <button
           className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"

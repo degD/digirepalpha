@@ -104,6 +104,26 @@ export function hiddenMarkerRanges(source: string): SourceRange[] {
   ].sort((first, second) => first.from - second.from);
 }
 
+export function plainTextClipboardContent(source: string): string {
+  const markers = hiddenMarkerRanges(source);
+  let text = "";
+  let markerIndex = 0;
+
+  for (let index = 0; index < source.length; index++) {
+    while (markers[markerIndex]?.to <= index) {
+      markerIndex++;
+    }
+
+    if (markers[markerIndex]?.from <= index && index < markers[markerIndex].to) {
+      continue;
+    }
+
+    text += source[index];
+  }
+
+  return text;
+}
+
 export function touchesHiddenMarker(
   source: string,
   range: SourceRange,

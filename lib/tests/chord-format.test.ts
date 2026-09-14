@@ -5,6 +5,7 @@ import {
   chordifySelection,
   escapeLiteralBrackets,
   hiddenMarkerRanges,
+  plainTextClipboardContent,
   scanChordFormat,
   touchesHiddenMarker,
   unchordSelection,
@@ -66,6 +67,16 @@ describe("hidden markers", () => {
     ]);
     assert.equal(touchesHiddenMarker(source, { from: 3, to: 4 }), true);
     assert.equal(touchesHiddenMarker(source, { from: 1, to: 3 }), false);
+  });
+});
+
+describe("clipboard content", () => {
+  it("copies rendered text without hidden chord markup", () => {
+    assert.equal(plainTextClipboardContent("<Em> \\<literal\\>"), "Em <literal>");
+  });
+
+  it("preserves visible malformed delimiters", () => {
+    assert.equal(plainTextClipboardContent("<unfinished"), "<unfinished");
   });
 });
 

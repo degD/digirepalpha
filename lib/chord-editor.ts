@@ -9,6 +9,7 @@ import {
 import {
   escapeLiteralBrackets,
   hiddenMarkerRanges,
+  plainTextClipboardContent,
   scanChordFormat,
   type SourceRange,
 } from "./chord-format";
@@ -178,5 +179,6 @@ export const chordProtectedEditing = [
     return true;
   }),
   EditorView.clipboardInputFilter.of(escapeLiteralBrackets),
+  EditorView.clipboardOutputFilter.of(plainTextClipboardContent),
   keymap.of(protectedDeletionKeys),
 ];

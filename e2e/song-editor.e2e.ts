@@ -70,6 +70,24 @@ test("renders chords and escapes typed literal brackets", async ({ page }) => {
   await expect.poll(() => savedSongText(page)).toBe(String.raw`<Em> \<literal\>\<A\>`);
 });
 
+test("deletes a literal bracket with its hidden escape", async ({ page }) => {
+  await seedSong(page, {
+    id: 1,
+    title: "Test Song",
+    tags: ["jazz"],
+    song: String.raw`\>`,
+  });
+  await page.goto("/editor/1");
+
+  const editor = page.locator(".cm-content");
+  await editor.click();
+  await page.keyboard.press("End");
+  await page.keyboard.press("Backspace");
+
+  await expect.poll(() => savedSongText(page)).toBe("");
+  await expect(editor).toHaveText("");
+});
+
 test("chordifies a selection and supports undo", async ({ page }) => {
   await seedSong(page, {
     id: 1,

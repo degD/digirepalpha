@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import { EditorState } from "@codemirror/state";
 import {
   chordProtectedEditing,
+  escapedBracketDeletionRange,
   getChordEditorRanges,
   markerSkipPosition,
 } from "../chord-editor";
@@ -64,6 +65,17 @@ describe("chord protected editing", () => {
     assert.equal(markerSkipPosition("<Em>", 1, "backward"), 0);
     assert.equal(markerSkipPosition("<Em>", 3, "forward"), 4);
     assert.equal(markerSkipPosition("<Em>", 2, "backward"), undefined);
+  });
+
+  it("deletes escaped brackets with their hidden backslashes", () => {
+    assert.deepEqual(escapedBracketDeletionRange("\\<", 2, "backward"), {
+      from: 0,
+      to: 2,
+    });
+    assert.deepEqual(escapedBracketDeletionRange("\\>", 0, "forward"), {
+      from: 0,
+      to: 2,
+    });
   });
 
   it("removes delimiters when an edit empties a non-empty chord", () => {

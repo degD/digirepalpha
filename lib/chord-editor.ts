@@ -1,4 +1,4 @@
-import { EditorState, StateField, type Transaction } from "@codemirror/state";
+import { EditorState, Prec, StateField, type Transaction } from "@codemirror/state";
 import {
   Decoration,
   type DecorationSet,
@@ -79,6 +79,21 @@ export function markerSkipPosition(
   return direction === "backward" ? marker.from : marker.to;
 }
 
+export function escapedBracketDeletionRange(
+  source: string,
+  position: number,
+  direction: "backward" | "forward",
+): SourceRange | undefined {
+  const escapedBracket = scanChordFormat(source).escapedBrackets.find((range) =>
+    direction === "backward" ? range.to === position : range.from === position,
+  );
+
+  return escapedBracket && {
+    from: escapedBracket.from,
+    to: escapedBracket.to,
+  };
+}
+
 interface ChordDecorations {
   decorations: DecorationSet;
   hiddenMarkers: DecorationSet;
@@ -157,9 +172,43 @@ function skipHiddenMarker(direction: "backward" | "forward") {
   };
 }
 
+function deleteEscapedBracket(direction: "backward" | "forward") {
+  return (view: EditorView): boolean => {
+    const selection = view.state.selection.main;
+
+    if (!selection.empty) {
+      return false;
+    }
+
+    const range = escapedBracketDeletionRange(
+      view.state.doc.toString(),
+      selection.head,
+      direction,
+    );
+
+    if (!range) {
+      return false;
+    }
+
+    view.dispatch({
+      changes: { ...range, insert: "" },
+      selection: { anchor: range.from },
+      userEvent: `delete.${direction}`,
+    });
+    return true;
+  };
+}
+
+function protectedDeletion(direction: "backward" | "forward") {
+  const deleteEscaped = deleteEscapedBracket(direction);
+  const skipMarker = skipHiddenMarker(direction);
+
+  return (view: EditorView) => deleteEscaped(view) || skipMarker(view);
+}
+
 const protectedDeletionKeys: KeyBinding[] = [
-  { key: "Backspace", run: skipHiddenMarker("backward") },
-  { key: "Delete", run: skipHiddenMarker("forward") },
+  { key: "Backspace", run: protectedDeletion("backward") },
+  { key: "Delete", run: protectedDeletion("forward") },
 ];
 
 export const chordProtectedEditing = [
@@ -180,5 +229,5 @@ export const chordProtectedEditing = [
   }),
   EditorView.clipboardInputFilter.of(escapeLiteralBrackets),
   EditorView.clipboardOutputFilter.of(plainTextClipboardContent),
-  keymap.of(protectedDeletionKeys),
+  Prec.highest(keymap.of(protectedDeletionKeys)),
 ];

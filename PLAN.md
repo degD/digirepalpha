@@ -167,7 +167,7 @@ unit tests and playwright editor tests. Transpose still disabled.
 
 ## v0.7 
 
-Enable transpose. New song button. Long press to delete.
+Fix bugs. Enable transpose. New song button. Long press to delete.
 
 ## v0.8 
 

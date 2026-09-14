@@ -88,6 +88,27 @@ test("deletes a literal bracket with its hidden escape", async ({ page }) => {
   await expect(editor).toHaveText("");
 });
 
+test("transposes chords, saves the result, and supports undo", async ({ page }) => {
+  await seedSong(page, {
+    id: 1,
+    title: "Test Song",
+    tags: ["jazz"],
+    song: "<C> <Am7> <C/G> <Bb> lyrics",
+  });
+  await page.goto("/editor/1");
+
+  const editor = page.locator(".cm-content");
+  await page.getByRole("button", { name: "Transpose +" }).click();
+
+  await expect.poll(() => savedSongText(page)).toBe("<C#> <A#m7> <C#/G#> <B> lyrics");
+  await expect(editor).toHaveText("C# A#m7 C#/G# B lyrics");
+
+  await editor.click();
+  await page.keyboard.press("Control+Z");
+
+  await expect.poll(() => savedSongText(page)).toBe("<C> <Am7> <C/G> <Bb> lyrics");
+});
+
 test("chordifies a selection and supports undo", async ({ page }) => {
   await seedSong(page, {
     id: 1,

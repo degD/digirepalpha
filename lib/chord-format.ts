@@ -28,6 +28,45 @@ export interface SourceTransformation {
   selection: SourceSelection;
 }
 
+const SHARP_CHROMATIC_NOTES = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
+
+const NOTE_INDEX: Record<string, number> = {
+  C: 0,
+  "B#": 0,
+  "C#": 1,
+  Db: 1,
+  D: 2,
+  "D#": 3,
+  Eb: 3,
+  E: 4,
+  Fb: 4,
+  "E#": 5,
+  F: 5,
+  "F#": 6,
+  Gb: 6,
+  G: 7,
+  "G#": 8,
+  Ab: 8,
+  A: 9,
+  "A#": 10,
+  Bb: 10,
+  B: 11,
+  Cb: 11,
+};
+
 function isEscaped(source: string, position: number): boolean {
   let backslashes = 0;
 
@@ -183,6 +222,50 @@ export function applySourceChanges(
       to: mapPosition(selection.to, sortedChanges, 1),
     },
   };
+}
+
+export function transposeChordContent(content: string, semitones: number): string {
+  return content
+    .split("/")
+    .map((part) => {
+      const match = /^(\s*)([A-G][#b]?)(.*)$/.exec(part);
+
+      if (!match) {
+        return part;
+      }
+
+      const [, leadingWhitespace, root, suffix] = match;
+      const noteIndex = NOTE_INDEX[root];
+
+      if (noteIndex === undefined) {
+        return part;
+      }
+
+      const transposedIndex = ((noteIndex + semitones) % 12 + 12) % 12;
+      return `${leadingWhitespace}${SHARP_CHROMATIC_NOTES[transposedIndex]}${suffix}`;
+    })
+    .join("/");
+}
+
+export function transposeSongChords(
+  source: string,
+  selection: SourceSelection,
+  semitones: number,
+): SourceTransformation {
+  if (semitones === 0) {
+    return { source, selection };
+  }
+
+  const changes = scanChordFormat(source).chords.flatMap((chord) => {
+    const content = source.slice(chord.contentFrom, chord.contentTo);
+    const transposedContent = transposeChordContent(content, semitones);
+
+    return content === transposedContent
+      ? []
+      : [{ from: chord.contentFrom, to: chord.contentTo, insert: transposedContent }];
+  });
+
+  return applySourceChanges(source, selection, changes);
 }
 
 function plainTokenRanges(

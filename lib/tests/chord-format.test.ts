@@ -7,6 +7,8 @@ import {
   hiddenMarkerRanges,
   plainTextClipboardContent,
   scanChordFormat,
+  transposeChordContent,
+  transposeSongChords,
   touchesHiddenMarker,
   unchordSelection,
 } from "../chord-format";
@@ -77,6 +79,32 @@ describe("clipboard content", () => {
 
   it("preserves visible malformed delimiters", () => {
     assert.equal(plainTextClipboardContent("<unfinished"), "<unfinished");
+  });
+});
+
+describe("chord transposition", () => {
+  it("transposes chord roots and preserves their suffixes", () => {
+    assert.equal(transposeChordContent("Am7", 1), "A#m7");
+    assert.equal(transposeChordContent("Bbmaj7", 1), "Bmaj7");
+    assert.equal(transposeChordContent("C", -1), "B");
+  });
+
+  it("transposes slash chord bass notes with sharp output", () => {
+    assert.equal(transposeChordContent("C/G", 1), "C#/G#");
+  });
+
+  it("leaves unrecognized chord contents unchanged", () => {
+    assert.equal(transposeChordContent("N.C.", 1), "N.C.");
+  });
+
+  it("transposes only valid chord markup and maps selections", () => {
+    assert.deepEqual(
+      transposeSongChords("<C> words <Bb> <unfinished", { from: 0, to: 14 }, 1),
+      {
+        source: "<C#> words <B> <unfinished",
+        selection: { from: 0, to: 14 },
+      },
+    );
   });
 });
 

@@ -1,6 +1,77 @@
 "use client";
 
+import { useRef, useState, type ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import { loadSongData, saveSongData } from "../../lib/song-data";
+import {
+  parseSongDataBackup,
+  serializeSongData,
+  SONG_DATA_BACKUP_FILE_NAME,
+} from "../../lib/song-data-transfer";
+
 export function DataManager() {
+  const [status, setStatus] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  function handleExport() {
+    try {
+      const songData = loadSongData();
+      const backup = new Blob([serializeSongData(songData)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(backup);
+      const download = document.createElement("a");
+
+      download.href = url;
+      download.download = SONG_DATA_BACKUP_FILE_NAME;
+      download.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      setStatus("Backup download started.");
+    } catch {
+      setStatus("Could not export the song database.");
+    }
+  }
+
+  async function handleImport(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setIsImporting(true);
+    setStatus("");
+
+    try {
+      const importedSongData = parseSongDataBackup(await file.text());
+      const songCount = importedSongData.length;
+      const confirmed = window.confirm(
+        `Replace the current database with ${songCount} imported ${songCount === 1 ? "song" : "songs"}? This cannot be undone.`,
+      );
+
+      if (!confirmed) {
+        setStatus("Import cancelled.");
+        return;
+      }
+
+      saveSongData(importedSongData);
+      router.push("/");
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? error.message
+          : "Could not import the selected file.",
+      );
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-3 border-t border-zinc-200 pt-6">
@@ -11,8 +82,8 @@ export function DataManager() {
           </p>
         </div>
         <button
-          className="h-10 w-fit rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
-          disabled
+          className="h-10 w-fit rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          onClick={handleExport}
           type="button"
         >
           Export database
@@ -27,13 +98,23 @@ export function DataManager() {
           </p>
         </div>
         <label className="w-fit">
-          <span className="sr-only">Choose a song database backup</span>
-          <input accept=".songs,application/json" disabled type="file" />
+          <span className="block pb-1 text-sm font-medium">
+            Choose a song database backup
+          </span>
+          <input
+            accept=".songs,application/json"
+            disabled={isImporting}
+            onChange={handleImport}
+            ref={fileInputRef}
+            type="file"
+          />
         </label>
       </section>
-      <p aria-live="polite" className="text-sm text-zinc-600" role="status">
-        Backup controls will be available shortly.
-      </p>
+      {status && (
+        <p aria-live="polite" className="text-sm text-zinc-600" role="status">
+          {status}
+        </p>
+      )}
     </div>
   );
 }

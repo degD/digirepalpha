@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   createSong,
+  deleteSong,
   initializeSongData,
   loadSongData,
   saveSongData,
@@ -39,6 +40,13 @@ describe("song data storage", () => {
       tags: [],
       song: "",
     });
+  });
+
+  it("deletes only the selected song", () => {
+    const otherSong = { ...songs[0], id: 2, title: "Other Song" };
+
+    assert.deepEqual(deleteSong([...songs, otherSong], 1), [otherSong]);
+    assert.deepEqual(deleteSong(songs, 2), songs);
   });
 
   it("returns an empty database when no data has been saved", () => {

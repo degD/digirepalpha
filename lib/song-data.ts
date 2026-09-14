@@ -105,3 +105,7 @@ export function createSong(songData: SongData, title: string): SongItem {
     song: "",
   };
 }
+
+export function deleteSong(songData: SongData, songId: number): SongData {
+  return songData.filter((song) => song.id !== songId);
+}

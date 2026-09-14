@@ -172,3 +172,11 @@ Fix bugs. Enable transpose. New song button. Long press to delete.
 ## v0.8 
 
 Add data page.
+
+## v0.9
+
+Extensive E2E testing. High test coverage.
+
+## v0.10
+
+Add cross platform support with Capacitor.js.

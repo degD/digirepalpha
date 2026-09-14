@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { demoSongData } from "../lib/demo-song-data";
 import {
   createSong,
+  deleteSong,
   initializeSongData,
   saveSongData,
   type SongData,
@@ -15,6 +16,9 @@ import { searchSongs } from "../lib/song-search";
 export default function Home() {
   const [query, setQuery] = useState("");
   const [songData, setSongData] = useState<SongData>([]);
+  const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressLinkClickRef = useRef(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -28,6 +32,14 @@ export default function Home() {
 
     return () => {
       cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (deleteTimerRef.current) {
+        clearTimeout(deleteTimerRef.current);
+      }
     };
   }, []);
 
@@ -46,6 +58,48 @@ export default function Home() {
     saveSongData(updatedSongData);
     setSongData(updatedSongData);
     router.push(`/editor/${song.id}`);
+  }
+
+  function cancelDeleteTimer() {
+    if (deleteTimerRef.current) {
+      clearTimeout(deleteTimerRef.current);
+      deleteTimerRef.current = null;
+    }
+  }
+
+  function handleSongPointerDown(songId: number) {
+    cancelDeleteTimer();
+    deleteTimerRef.current = setTimeout(() => {
+      deleteTimerRef.current = null;
+      suppressLinkClickRef.current = true;
+      setSelectedSongId(songId);
+    }, 500);
+  }
+
+  function handleSongClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (!suppressLinkClickRef.current) {
+      return;
+    }
+
+    event.preventDefault();
+    suppressLinkClickRef.current = false;
+  }
+
+  function handleSongContextMenu(
+    event: MouseEvent<HTMLAnchorElement>,
+    songId: number,
+  ) {
+    event.preventDefault();
+    cancelDeleteTimer();
+    setSelectedSongId(songId);
+  }
+
+  function handleSongDelete(songId: number) {
+    const updatedSongData = deleteSong(songData, songId);
+
+    saveSongData(updatedSongData);
+    setSongData(updatedSongData);
+    setSelectedSongId(null);
   }
 
   return (
@@ -91,14 +145,29 @@ export default function Home() {
         ) : (
           <ul className="divide-y divide-zinc-200">
             {matchingSongs.map((song) => (
-              <li key={song.id}>
+              <li className="flex items-center gap-2" key={song.id}>
                 <Link
-                  className="block rounded py-3 outline-none hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                  className="block min-w-0 flex-1 rounded py-3 outline-none hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
                   href={`/editor/${song.id}`}
+                  onClick={handleSongClick}
+                  onContextMenu={(event) => handleSongContextMenu(event, song.id)}
+                  onPointerCancel={cancelDeleteTimer}
+                  onPointerDown={() => handleSongPointerDown(song.id)}
+                  onPointerMove={cancelDeleteTimer}
+                  onPointerUp={cancelDeleteTimer}
                 >
                   <strong className="block">{song.title}</strong>
                   <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
                 </Link>
+                {selectedSongId === song.id && (
+                  <button
+                    className="h-10 shrink-0 rounded border border-red-300 px-3 font-medium text-red-700 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                    onClick={() => handleSongDelete(song.id)}
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                )}
               </li>
             ))}
           </ul>

@@ -156,6 +156,19 @@ disabled. Font size buttons work. DB seeding only concludes
 if DB is empty. Font size range is 12px to 32px, starting at 
 16px.
 
-## v0.6
+## v0.6 [COMPLETE]
 
-Custom chord format. Custom editor. Tests.
+Anything between `<` and `>` is considered a chord. CodeMirror 6
+is used to create the editor. Delimiters are always hidden to user.
+Delimiters entered by user are escaped, e.g. `\<`. The editing
+rules are written above in the plan. Added chord library
+unit tests and playwright editor tests. Transpose still disabled.
+`bun test` for unit tests. `bun run test:e2e` for playwright tests.
+
+## v0.7 
+
+Enable transpose. New song button. Long press to delete.
+
+## v0.8 
+
+Add data page.

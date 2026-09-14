@@ -4,7 +4,7 @@ import { history, historyKeymap, standardKeymap } from "@codemirror/commands";
 import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
-import { chordEditor } from "../../../lib/chord-editor";
+import { chordEditor, chordProtectedEditing } from "../../../lib/chord-editor";
 import { demoSongData } from "../../../lib/demo-song-data";
 import {
   initializeSongData,
@@ -53,6 +53,7 @@ export function SongEditor({ songId }: { songId: number }) {
           keymap.of([...standardKeymap, ...historyKeymap]),
           EditorView.lineWrapping,
           chordEditor,
+          chordProtectedEditing,
           EditorView.contentAttributes.of({ "aria-label": "Song text" }),
           fontSizeCompartment.current.of(editorTheme(16)),
           EditorView.domEventObservers({

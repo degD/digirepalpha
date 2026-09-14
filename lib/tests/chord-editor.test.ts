@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { getChordEditorRanges } from "../chord-editor";
+import { EditorState } from "@codemirror/state";
+import {
+  chordProtectedEditing,
+  getChordEditorRanges,
+  markerSkipPosition,
+} from "../chord-editor";
 
 describe("chord editor ranges", () => {
   it("styles chord contents and hides their delimiters", () => {
@@ -51,5 +56,31 @@ describe("chord editor ranges", () => {
       chordContents: [],
       hiddenMarkers: [],
     });
+  });
+});
+
+describe("chord protected editing", () => {
+  it("skips hidden markers without changing source text", () => {
+    assert.equal(markerSkipPosition("<Em>", 1, "backward"), 0);
+    assert.equal(markerSkipPosition("<Em>", 3, "forward"), 4);
+    assert.equal(markerSkipPosition("<Em>", 2, "backward"), undefined);
+  });
+
+  it("removes delimiters when an edit empties a non-empty chord", () => {
+    const state = EditorState.create({
+      doc: "<Em>",
+      extensions: [chordProtectedEditing],
+    });
+
+    assert.equal(state.update({ changes: { from: 1, to: 3 } }).newDoc.toString(), "");
+  });
+
+  it("preserves imported empty chords", () => {
+    const state = EditorState.create({
+      doc: "<>",
+      extensions: [chordProtectedEditing],
+    });
+
+    assert.equal(state.update({ changes: { from: 0, insert: "x" } }).newDoc.toString(), "x<>");
   });
 });

@@ -1,6 +1,17 @@
-import { StateField } from "@codemirror/state";
-import { Decoration, type DecorationSet, EditorView } from "@codemirror/view";
-import { scanChordFormat, type SourceRange } from "./chord-format";
+import { EditorState, StateField, type Transaction } from "@codemirror/state";
+import {
+  Decoration,
+  type DecorationSet,
+  EditorView,
+  keymap,
+  type KeyBinding,
+} from "@codemirror/view";
+import {
+  escapeLiteralBrackets,
+  hiddenMarkerRanges,
+  scanChordFormat,
+  type SourceRange,
+} from "./chord-format";
 
 export interface ChordEditorRanges {
   chordContents: SourceRange[];
@@ -51,6 +62,22 @@ export function getChordEditorRanges(source: string): ChordEditorRanges {
   };
 }
 
+export function markerSkipPosition(
+  source: string,
+  position: number,
+  direction: "backward" | "forward",
+): number | undefined {
+  const marker = hiddenMarkerRanges(source).find((range) =>
+    direction === "backward" ? range.to === position : range.from === position,
+  );
+
+  if (!marker) {
+    return undefined;
+  }
+
+  return direction === "backward" ? marker.from : marker.to;
+}
+
 interface ChordDecorations {
   decorations: DecorationSet;
   hiddenMarkers: DecorationSet;
@@ -85,3 +112,71 @@ export const chordEditor = StateField.define<ChordDecorations>({
     EditorView.atomicRanges.of((view) => view.state.field(field).hiddenMarkers),
   ],
 });
+
+function removeNewlyEmptyChords(transaction: Transaction) {
+  if (!transaction.docChanged) {
+    return transaction;
+  }
+
+  const newSource = transaction.newDoc.toString();
+  const changes = scanChordFormat(transaction.startState.doc.toString()).chords
+    .filter((chord) => chord.contentFrom !== chord.contentTo)
+    .flatMap((chord) => {
+      const from = transaction.changes.mapPos(chord.from, -1);
+      const to = transaction.changes.mapPos(chord.to, 1);
+
+      return newSource.slice(from, to) === "<>" ? [{ from, to, insert: "" }] : [];
+    });
+
+  return changes.length === 0
+    ? transaction
+    : [transaction, { changes, sequential: true }];
+}
+
+function skipHiddenMarker(direction: "backward" | "forward") {
+  return (view: EditorView): boolean => {
+    const selection = view.state.selection.main;
+
+    if (!selection.empty) {
+      return false;
+    }
+
+    const position = markerSkipPosition(
+      view.state.doc.toString(),
+      selection.head,
+      direction,
+    );
+
+    if (position === undefined) {
+      return false;
+    }
+
+    view.dispatch({ selection: { anchor: position } });
+    return true;
+  };
+}
+
+const protectedDeletionKeys: KeyBinding[] = [
+  { key: "Backspace", run: skipHiddenMarker("backward") },
+  { key: "Delete", run: skipHiddenMarker("forward") },
+];
+
+export const chordProtectedEditing = [
+  EditorState.transactionFilter.of(removeNewlyEmptyChords),
+  EditorView.inputHandler.of((view, from, to, text) => {
+    const escapedText = escapeLiteralBrackets(text);
+
+    if (escapedText === text) {
+      return false;
+    }
+
+    view.dispatch({
+      changes: { from, to, insert: escapedText },
+      selection: { anchor: from + escapedText.length },
+      userEvent: "input.type",
+    });
+    return true;
+  }),
+  EditorView.clipboardInputFilter.of(escapeLiteralBrackets),
+  keymap.of(protectedDeletionKeys),
+];

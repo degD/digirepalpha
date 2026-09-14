@@ -4,6 +4,7 @@ import { history, historyKeymap, standardKeymap } from "@codemirror/commands";
 import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
+import { chordEditor } from "../../../lib/chord-editor";
 import { demoSongData } from "../../../lib/demo-song-data";
 import {
   initializeSongData,
@@ -26,6 +27,7 @@ function editorTheme(fontSize: number) {
       fontSize: `${fontSize}px`,
     },
     ".cm-scroller": { fontFamily: "inherit" },
+    ".digirep-chord": { color: "#7c3aed", fontWeight: "600" },
   });
 }
 
@@ -50,6 +52,7 @@ export function SongEditor({ songId }: { songId: number }) {
           history(),
           keymap.of([...standardKeymap, ...historyKeymap]),
           EditorView.lineWrapping,
+          chordEditor,
           EditorView.contentAttributes.of({ "aria-label": "Song text" }),
           fontSizeCompartment.current.of(editorTheme(16)),
           EditorView.domEventObservers({

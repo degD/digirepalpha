@@ -94,3 +94,14 @@ export function updateSongText(
     song.id === songId ? { ...song, song: text } : song,
   );
 }
+
+export function createSong(songData: SongData, title: string): SongItem {
+  const nextId = Math.max(0, ...songData.map((song) => song.id)) + 1;
+
+  return {
+    id: nextId,
+    title: title.trim(),
+    tags: [],
+    song: "",
+  };
+}

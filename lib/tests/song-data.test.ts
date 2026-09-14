@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  createSong,
   initializeSongData,
   loadSongData,
   saveSongData,
@@ -31,6 +32,15 @@ function createStorage(initialValue: string | null = null): SongStorage {
 }
 
 describe("song data storage", () => {
+  it("creates a blank song with the next available ID", () => {
+    assert.deepEqual(createSong([{ ...songs[0], id: 4 }], "  New Song  "), {
+      id: 5,
+      title: "New Song",
+      tags: [],
+      song: "",
+    });
+  });
+
   it("returns an empty database when no data has been saved", () => {
     assert.deepEqual(loadSongData(createStorage()), []);
   });

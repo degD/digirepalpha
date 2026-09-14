@@ -2,18 +2,51 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { demoSongData } from "../lib/demo-song-data";
-import { initializeSongData } from "../lib/song-data";
+import {
+  createSong,
+  initializeSongData,
+  saveSongData,
+  type SongData,
+} from "../lib/song-data";
 import { searchSongs } from "../lib/song-search";
 
 export default function Home() {
   const [query, setQuery] = useState("");
+  const [songData, setSongData] = useState<SongData>([]);
+  const router = useRouter();
 
   useEffect(() => {
-    initializeSongData(demoSongData);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (!cancelled) {
+        setSongData(initializeSongData(demoSongData));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const matchingSongs = searchSongs(demoSongData, query);
+  const matchingSongs = searchSongs(songData, query);
+
+  function handleNewSong() {
+    const title = window.prompt("Song title");
+
+    if (!title?.trim()) {
+      return;
+    }
+
+    const song = createSong(songData, title);
+    const updatedSongData = [...songData, song];
+
+    saveSongData(updatedSongData);
+    setSongData(updatedSongData);
+    router.push(`/editor/${song.id}`);
+  }
 
   return (
     <main className="flex h-dvh flex-col bg-white text-zinc-950">
@@ -34,7 +67,7 @@ export default function Home() {
           <div className="flex gap-2">
             <button
               className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
-              onClick={() => console.log("New Song")}
+              onClick={handleNewSong}
               type="button"
             >
               New Song

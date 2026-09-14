@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { demoSongData } from "../../../lib/demo-song-data";
 import { SongEditor } from "./song-editor";
 
 export default async function EditorPage({
@@ -15,12 +14,6 @@ export default async function EditorPage({
     notFound();
   }
 
-  const song = demoSongData.find((item) => item.id === songId);
-
-  if (!song) {
-    notFound();
-  }
-
   return (
     <main className="min-h-screen bg-white px-4 py-4 text-zinc-950">
       <div className="mx-auto flex max-w-4xl flex-col gap-4">
@@ -30,11 +23,7 @@ export default async function EditorPage({
         >
           Back
         </Link>
-        <header>
-          <h1 className="text-xl font-semibold">{song.title}</h1>
-          <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
-        </header>
-        <SongEditor key={song.id} songId={song.id} />
+        <SongEditor songId={songId} />
       </div>
     </main>
   );

@@ -10,6 +10,7 @@ import { demoSongData } from "../../../lib/demo-song-data";
 import {
   initializeSongData,
   saveSongData,
+  type SongItem,
   updateSongText,
 } from "../../../lib/song-data";
 
@@ -37,11 +38,23 @@ export function SongEditor({ songId }: { songId: number }) {
   const editorViewRef = useRef<EditorView>(null);
   const fontSizeCompartment = useRef(new Compartment());
   const [fontSize, setFontSize] = useState(16);
+  const [song, setSong] = useState<SongItem | null>();
 
   useEffect(() => {
-    const songData = initializeSongData(demoSongData);
-    const song = songData.find((item) => item.id === songId);
+    let cancelled = false;
 
+    void Promise.resolve().then(() => {
+      if (!cancelled) {
+        setSong(initializeSongData(demoSongData).find((item) => item.id === songId) ?? null);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [songId]);
+
+  useEffect(() => {
     if (!editorContainerRef.current || !song) {
       return;
     }
@@ -86,7 +99,7 @@ export function SongEditor({ songId }: { songId: number }) {
       editorView.destroy();
       editorViewRef.current = null;
     };
-  }, [songId]);
+  }, [song, songId]);
 
   useEffect(() => {
     editorViewRef.current?.dispatch({
@@ -153,8 +166,20 @@ export function SongEditor({ songId }: { songId: number }) {
     editorView.focus();
   }
 
+  if (song === undefined) {
+    return <p className="text-sm text-zinc-600">Loading song...</p>;
+  }
+
+  if (song === null) {
+    return <p className="text-sm text-zinc-600">Song not found.</p>;
+  }
+
   return (
     <>
+      <header>
+        <h1 className="text-xl font-semibold">{song.title}</h1>
+        <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
+      </header>
       <div aria-label="Editor tools" className="flex flex-wrap gap-2">
         <button
           className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"

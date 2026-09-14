@@ -126,13 +126,12 @@ export default function Home() {
             >
               New Song
             </button>
-            <button
+            <Link
               className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
-              onClick={() => console.log("Data")}
-              type="button"
+              href="/data"
             >
               Data
-            </button>
+            </Link>
           </div>
         </div>
       </header>

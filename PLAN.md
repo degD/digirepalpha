@@ -184,6 +184,7 @@ Extensive E2E testing across Chromium and WebKit. Covers search, song
 creation and deletion, editor persistence and controls, routes, and complete
 database import and export workflows.
 
-## v0.10
+## v0.10 [COMPLETE]
 
-Add cross platform support with Capacitor.js.
+Add Android support with Capacitor.js. The app is statically exported, bundled
+offline, and supports native backup sharing through the Android share sheet.

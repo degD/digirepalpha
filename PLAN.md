@@ -195,3 +195,11 @@ Autoselect. Tag and title changing editing. Holding the mouse still selects the
 word under the pointer, while Android keeps its native touch long-press
 selection. Song details are edited in a dialog with a tag dropdown, an add-tag
 field, and case-insensitive tag deduplication.
+
+## v0.12 [COMPLETE]
+
+Restyle.
+
+## v0.13 
+
+Remove hardcoded songs.

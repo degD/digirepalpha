@@ -181,3 +181,61 @@ test("enforces temporary font-size boundaries without changing song text", async
   await expect(increase).toBeDisabled();
   await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "<Em>Lyrics" });
 });
+
+test("edits song metadata without replacing editor text or undo history", async ({
+  page,
+}) => {
+  await seedSongs(page, [
+    { id: 1, title: "Tag Source", tags: ["JAZZ", "rock"], song: "" },
+    { id: 2, title: "Test Song", tags: ["practice"], song: "Original" },
+  ]);
+  await page.goto("/editor/?id=2");
+
+  const songEditor = editor(page);
+  await songEditor.click();
+  await page.keyboard.press("End");
+  await page.keyboard.type(" revised");
+  await expect.poll(() => savedSong(page, 2)).toMatchObject({
+    song: "Original revised",
+  });
+
+  await page.getByRole("button", { name: "Edit" }).click();
+  const dialog = page.getByRole("dialog", { name: "Edit song details" });
+  await dialog.getByLabel("Title").fill("  Updated Song  ");
+  await dialog.getByLabel("Tags", { exact: true }).selectOption("JAZZ");
+  await dialog.getByLabel("Add new tag").fill(" Live ");
+  await dialog.getByRole("button", { name: "Add" }).click();
+  await dialog.getByLabel("Add new tag").fill("live");
+  await dialog.getByRole("button", { name: "Add" }).click();
+  await dialog.getByRole("button", { name: "Remove practice" }).click();
+  await dialog.getByRole("button", { name: "Save details" }).click();
+
+  await expect(page.getByRole("heading", { name: "Updated Song" })).toBeVisible();
+  await expect.poll(() => savedSong(page, 2)).toMatchObject({
+    title: "Updated Song",
+    tags: ["JAZZ", "Live"],
+    song: "Original revised",
+  });
+
+  await songEditor.click();
+  await page.keyboard.press("ControlOrMeta+Z");
+  await expect.poll(() => savedSong(page, 2)).toMatchObject({ song: "Original" });
+});
+
+test("requires a non-empty title when editing song metadata", async ({ page }) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "Lyrics" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  await page.getByRole("button", { name: "Edit" }).click();
+  const dialog = page.getByRole("dialog", { name: "Edit song details" });
+  await dialog.getByLabel("Title").fill("   ");
+  await dialog.getByRole("button", { name: "Save details" }).click();
+
+  await expect(dialog.getByRole("alert")).toHaveText("A song title is required.");
+  await expect.poll(() => savedSong(page, 1)).toMatchObject({
+    title: "Test Song",
+    song: "Lyrics",
+  });
+});

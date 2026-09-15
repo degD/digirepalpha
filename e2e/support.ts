@@ -40,7 +40,7 @@ export function editor(page: Page): Locator {
 }
 
 export function songLink(page: Page, id: number): Locator {
-  return page.locator(`a[href="/editor/${id}"]`);
+  return page.locator(`a[href="/editor/?id=${id}"]`);
 }
 
 export async function setBackupFile(

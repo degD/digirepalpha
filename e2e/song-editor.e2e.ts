@@ -9,7 +9,7 @@ test("autosaves the edited record and resets temporary font size after reload", 
     { id: 2, title: "Test Song", tags: ["jazz"], song: "" },
     { id: 3, title: "Last Song", tags: [], song: "Unchanged" },
   ]);
-  await page.goto("/editor/2");
+  await page.goto("/editor/?id=2");
 
   const songEditor = editor(page);
   await expect(songEditor).toBeVisible();
@@ -37,7 +37,7 @@ test("renders chords and escapes typed literal brackets", async ({ page }) => {
       song: String.raw`<Em> \<literal\>`,
     },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   const songEditor = editor(page);
   await expect(songEditor.locator(".digirep-chord")).toHaveText("Em");
@@ -58,7 +58,7 @@ test("deletes an escaped literal bracket with its hidden escape using Backspace"
   await seedSongs(page, [
     { id: 1, title: "Test Song", tags: [], song: String.raw`\>` },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   const songEditor = editor(page);
   await songEditor.click();
@@ -74,7 +74,7 @@ test("deletes an escaped literal bracket with its hidden escape using Delete", a
   await seedSongs(page, [
     { id: 1, title: "Test Song", tags: [], song: String.raw`\>` },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   const songEditor = editor(page);
   await songEditor.click();
@@ -96,7 +96,7 @@ test("transposes in both directions, preserves unrecognized text, and supports u
       song: "<C> <Am7> <C/G> <Bb> <lowercase>",
     },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   const songEditor = editor(page);
   await page.getByRole("button", { name: "Transpose +" }).click();
@@ -123,7 +123,7 @@ test("chordifies plain selections, unchordifies chord-only selections, and suppo
   await seedSongs(page, [
     { id: 1, title: "Test Song", tags: [], song: "A  minor\nB7" },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   const songEditor = editor(page);
   await songEditor.click();
@@ -150,7 +150,7 @@ test("does not change a collapsed Chordify selection", async ({ page }) => {
   await seedSongs(page, [
     { id: 1, title: "Test Song", tags: [], song: "Am" },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   await editor(page).click();
   await page.getByRole("button", { name: "Chordify" }).click();
@@ -163,7 +163,7 @@ test("enforces temporary font-size boundaries without changing song text", async
   await seedSongs(page, [
     { id: 1, title: "Test Song", tags: [], song: "<Em>Lyrics" },
   ]);
-  await page.goto("/editor/1");
+  await page.goto("/editor/?id=1");
 
   const songEditor = editor(page);
   const decrease = page.getByRole("button", { name: "Size -" });

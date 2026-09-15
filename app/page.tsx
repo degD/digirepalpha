@@ -57,7 +57,7 @@ export default function Home() {
 
     saveSongData(updatedSongData);
     setSongData(updatedSongData);
-    router.push(`/editor/${song.id}`);
+    router.push(`/editor/?id=${song.id}`);
   }
 
   function cancelDeleteTimer() {
@@ -103,7 +103,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-dvh flex-col bg-white text-zinc-950">
+    <main className="flex min-h-0 flex-1 flex-col bg-white text-zinc-950">
       <header className="shrink-0 border-b border-zinc-200">
         <div className="mx-auto flex max-w-4xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
           <h1 className="text-lg font-semibold">DigiRep</h1>
@@ -147,7 +147,7 @@ export default function Home() {
               <li className="flex items-center gap-2" key={song.id}>
                 <Link
                   className="block min-w-0 flex-1 rounded py-3 outline-none hover:bg-zinc-100 focus:bg-zinc-100 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
-                  href={`/editor/${song.id}`}
+                  href={`/editor/?id=${song.id}`}
                   onClick={handleSongClick}
                   onContextMenu={(event) => handleSongContextMenu(event, song.id)}
                   onPointerCancel={cancelDeleteTimer}

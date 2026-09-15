@@ -44,7 +44,7 @@ test("searches titles and tags without searching song text", async ({ page }) =>
     await results
       .getByRole("link")
       .evaluateAll((links) => links.map((link) => link.getAttribute("href"))),
-  ).toEqual(["/editor/1", "/editor/3"]);
+  ).toEqual(["/editor/?id=1", "/editor/?id=3"]);
 
   await search.fill("hidden phrase");
   await expect(page.getByText("No songs found.")).toBeVisible();
@@ -60,7 +60,7 @@ test("navigates between search, editor, and data pages", async ({ page }) => {
   await page.goto("/");
 
   await songLink(page, 7).click();
-  await expect(page).toHaveURL("/editor/7");
+  await expect(page).toHaveURL("/editor/?id=7");
   await expect(page.getByRole("heading", { name: "Route Song" })).toBeVisible();
   await expect(page.getByText("folk, live", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Back" })).toBeVisible();
@@ -70,7 +70,7 @@ test("navigates between search, editor, and data pages", async ({ page }) => {
   await expect(songLink(page, 7)).toBeVisible();
 
   await page.getByRole("link", { name: "Data" }).click();
-  await expect(page).toHaveURL("/data");
+  await expect(page).toHaveURL("/data/");
   await expect(page.getByRole("heading", { name: "Data" })).toBeVisible();
   await page.getByRole("link", { name: "Back" }).click();
   await expect(page).toHaveURL("/");

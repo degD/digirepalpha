@@ -16,7 +16,7 @@ export default defineConfig({
     { name: "webkit", use: devices["Desktop Safari"] },
   ],
   webServer: {
-    command: "bun run build && bun run start -- --port 3001",
+    command: "bun run build && bun run serve:export",
     url: "http://127.0.0.1:3001",
     reuseExistingServer: false,
     timeout: 120_000,

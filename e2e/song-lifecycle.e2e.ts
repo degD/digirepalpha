@@ -15,7 +15,7 @@ test("creates, edits, and persists a new song", async ({ page }) => {
   });
   await page.getByRole("button", { name: "New Song" }).click();
 
-  await expect(page).toHaveURL("/editor/9");
+  await expect(page).toHaveURL("/editor/?id=9");
   await expect(page.getByRole("heading", { name: "New Song" })).toBeVisible();
   await editor(page).click();
   await page.keyboard.type("Line one\n<Em>Line two");
@@ -56,7 +56,7 @@ test("does not create songs for cancelled or blank prompts and allows duplicate 
 
   page.once("dialog", (dialog) => dialog.accept("Duplicate"));
   await page.getByRole("button", { name: "New Song" }).click();
-  await expect(page).toHaveURL("/editor/2");
+  await expect(page).toHaveURL("/editor/?id=2");
   await expect.poll(() => savedSongs(page)).toEqual([
     ...songs,
     { id: 2, title: "Duplicate", tags: [], song: "" },
@@ -103,7 +103,7 @@ test("uses long press for deletion while regular taps still navigate", async ({ 
   await expect(songLink(page, 1)).toHaveCount(0);
 
   await songLink(page, 2).click();
-  await expect(page).toHaveURL("/editor/2");
+  await expect(page).toHaveURL("/editor/?id=2");
 });
 
 test("cancels a long press when the pointer moves or releases early", async ({ page }) => {
@@ -123,5 +123,5 @@ test("cancels a long press when the pointer moves or releases early", async ({ p
   await songLink(page, 1).hover();
   await page.mouse.down();
   await page.mouse.up();
-  await expect(page).toHaveURL("/editor/1");
+  await expect(page).toHaveURL("/editor/?id=1");
 });

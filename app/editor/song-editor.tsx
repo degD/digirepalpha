@@ -4,15 +4,15 @@ import { history, historyKeymap, standardKeymap } from "@codemirror/commands";
 import { Compartment, EditorState } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { useEffect, useRef, useState } from "react";
-import { chordEditor, chordProtectedEditing } from "../../../lib/chord-editor";
-import { chordifySelection, transposeSongChords } from "../../../lib/chord-format";
-import { demoSongData } from "../../../lib/demo-song-data";
+import { chordEditor, chordProtectedEditing } from "../../lib/chord-editor";
+import { chordifySelection, transposeSongChords } from "../../lib/chord-format";
+import { demoSongData } from "../../lib/demo-song-data";
 import {
   initializeSongData,
   saveSongData,
   type SongItem,
   updateSongText,
-} from "../../../lib/song-data";
+} from "../../lib/song-data";
 
 function editorTheme(fontSize: number) {
   return EditorView.theme({

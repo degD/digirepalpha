@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DigiRep</string>
+    <string name="title_activity_main">DigiRep</string>
+    <string name="package_name">net.dege.digirep</string>
+    <string name="custom_url_scheme">net.dege.digirep</string>
+</resources>

@@ -1,21 +1,15 @@
-import Link from "next/link";
+import { BackLink } from "../back-link";
 import { DataManager } from "./data-manager";
 
 export default function DataPage() {
   return (
-    <main className="min-h-0 flex-1 bg-white px-4 py-4 text-zinc-950">
-      <div className="mx-auto flex max-w-4xl flex-col gap-6">
-        <Link
-          className="w-fit rounded px-1 py-1 font-medium underline focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
-          href="/"
-        >
-          Back
-        </Link>
+    <main className="flex min-h-0 flex-1 flex-col bg-zinc-50 px-4 py-6 text-zinc-950">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
+        <BackLink />
         <header className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold">Data</h1>
-          <p className="text-sm text-zinc-600">
-            Export your song database for backup or replace it from a backup
-            file.
+          <h1 className="text-3xl font-bold tracking-tight">Data</h1>
+          <p className="text-sm text-zinc-500">
+            Export your song database for backup or replace it from a backup file.
           </p>
         </header>
         <DataManager />

@@ -9,9 +9,51 @@ import {
 } from "../../lib/song-data-transfer";
 import { exportSongDataBackup } from "../../lib/song-data-export";
 
+const actionButtonClassName =
+  "inline-flex h-11 items-center gap-2 rounded-xl bg-indigo-50 px-4 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600";
+
+function DownloadIcon({ className = "h-6 w-6" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 3v12" />
+      <path d="m7 10 5 5 5-5" />
+      <path d="M5 20h14" />
+    </svg>
+  );
+}
+
+function UploadIcon({ className = "h-6 w-6" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 21V9" />
+      <path d="m7 14 5-5 5 5" />
+      <path d="M5 4h14" />
+    </svg>
+  );
+}
+
 export function DataManager() {
   const [status, setStatus] = useState("");
   const [isImporting, setIsImporting] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -31,6 +73,7 @@ export function DataManager() {
       return;
     }
 
+    setSelectedFileName(file.name);
     setIsImporting(true);
     setStatus("");
 
@@ -63,42 +106,56 @@ export function DataManager() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-3 border-t border-zinc-200 pt-6">
-        <div>
+    <div className="flex flex-col gap-4">
+      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
+        <span className="text-zinc-800">
+          <DownloadIcon />
+        </span>
+        <div className="min-w-0 flex-1">
           <h2 className="font-semibold">Export</h2>
-          <p className="text-sm text-zinc-600">
-            Export all songs as a <code>db.songs</code> backup file.
+          <p className="text-sm text-zinc-500">
+            Export all songs as a db.songs backup file.
           </p>
         </div>
         <button
-          className="h-10 w-fit rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          className={actionButtonClassName}
           onClick={handleExport}
           type="button"
         >
+          <DownloadIcon className="h-4 w-4" />
           Export database
         </button>
       </section>
-      <section className="flex flex-col gap-3 border-t border-zinc-200 pt-6">
-        <div>
+      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
+        <span className="text-zinc-800">
+          <UploadIcon />
+        </span>
+        <div className="min-w-0 flex-1">
           <h2 className="font-semibold">Import</h2>
-          <p className="text-sm text-zinc-600">
-            Importing a backup replaces every song currently stored on this
-            device.
+          <p className="text-sm text-zinc-500">
+            Import a backup file to replace your current song database.
           </p>
         </div>
-        <label className="w-fit">
-          <span className="block pb-1 text-sm font-medium">
-            Choose a song database backup
-          </span>
-          <input
-            accept=".songs,application/json"
-            disabled={isImporting}
-            onChange={handleImport}
-            ref={fileInputRef}
-            type="file"
-          />
-        </label>
+        <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <label
+            className={`${actionButtonClassName} cursor-pointer ${isImporting ? "opacity-50" : ""}`}
+          >
+            <UploadIcon className="h-4 w-4" />
+            Choose file
+            <input
+              aria-label="Choose a song database backup"
+              accept=".songs,application/json"
+              className="sr-only"
+              disabled={isImporting}
+              onChange={handleImport}
+              ref={fileInputRef}
+              type="file"
+            />
+          </label>
+          <p className="text-xs text-zinc-500">
+            {selectedFileName || "No file selected."}
+          </p>
+        </div>
       </section>
       {status && (
         <p aria-live="polite" className="text-sm text-zinc-600" role="status">

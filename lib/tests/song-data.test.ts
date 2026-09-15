@@ -5,10 +5,12 @@ import {
   deleteSong,
   initializeSongData,
   loadSongData,
+  normalizeSongTags,
   saveSongData,
   SONG_DATA_STORAGE_KEY,
   type SongData,
   type SongStorage,
+  updateSongMetadata,
   updateSongText,
 } from "../song-data";
 
@@ -144,5 +146,37 @@ describe("song data storage", () => {
 
   it("leaves song data unchanged for an unknown ID", () => {
     assert.deepEqual(updateSongText(songs, 2, "New lyrics"), songs);
+  });
+
+  it("normalizes tags by trimming and deduplicating without changing casing", () => {
+    assert.deepEqual(normalizeSongTags([" jazz ", "JAZZ", "", "Rock", " rock "]), [
+      "jazz",
+      "Rock",
+    ]);
+  });
+
+  it("updates song metadata without replacing its text", () => {
+    const otherSong = { ...songs[0], id: 2, title: "Other Song" };
+    const updatedSongs = updateSongMetadata(
+      [...songs, otherSong],
+      1,
+      "  Updated Song  ",
+      [" jazz ", "JAZZ", "practice"],
+    );
+
+    assert.deepEqual(updatedSongs[0], {
+      id: 1,
+      title: "Updated Song",
+      tags: ["jazz", "practice"],
+      song: "<Em>Example lyrics",
+    });
+    assert.deepEqual(updatedSongs[1], otherSong);
+  });
+
+  it("rejects an empty title when updating metadata", () => {
+    assert.throws(
+      () => updateSongMetadata(songs, 1, "   ", []),
+      /A song title is required/,
+    );
   });
 });

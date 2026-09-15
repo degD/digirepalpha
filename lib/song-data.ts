@@ -95,6 +95,44 @@ export function updateSongText(
   );
 }
 
+export function normalizeSongTags(tags: string[]): string[] {
+  const normalizedTags: string[] = [];
+  const tagNames = new Set<string>();
+
+  for (const tag of tags) {
+    const normalizedTag = tag.trim();
+    const tagName = normalizedTag.toLocaleLowerCase();
+
+    if (normalizedTag && !tagNames.has(tagName)) {
+      normalizedTags.push(normalizedTag);
+      tagNames.add(tagName);
+    }
+  }
+
+  return normalizedTags;
+}
+
+export function updateSongMetadata(
+  songData: SongData,
+  songId: number,
+  title: string,
+  tags: string[],
+): SongData {
+  const normalizedTitle = title.trim();
+
+  if (!normalizedTitle) {
+    throw new Error("A song title is required.");
+  }
+
+  const normalizedTags = normalizeSongTags(tags);
+
+  return songData.map((song) =>
+    song.id === songId
+      ? { ...song, title: normalizedTitle, tags: normalizedTags }
+      : song,
+  );
+}
+
 export function createSong(songData: SongData, title: string): SongItem {
   const nextId = Math.max(0, ...songData.map((song) => song.id)) + 1;
 

@@ -9,6 +9,7 @@ import { chordifySelection, transposeSongChords } from "../../lib/chord-format";
 import { demoSongData } from "../../lib/demo-song-data";
 import { longPressWordSelection } from "../../lib/long-press-selection";
 import {
+  formatSongTags,
   initializeSongData,
   normalizeSongTags,
   saveSongData,
@@ -181,7 +182,7 @@ export function SongEditor({ songId }: { songId: number }) {
     const songData = initializeSongData(demoSongData);
 
     setTitleDraft(song.title);
-    setSelectedTags(song.tags);
+    setSelectedTags(normalizeSongTags(song.tags));
     setNewTag("");
     setTagOptions(normalizeSongTags(songData.flatMap((item) => item.tags)));
     setMetadataError("");
@@ -236,7 +237,7 @@ export function SongEditor({ songId }: { songId: number }) {
         <div className="flex items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-semibold">{song.title}</h1>
-            <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
+            <p className="text-sm text-zinc-600">{formatSongTags(song.tags)}</p>
           </div>
           <button
             className="h-10 shrink-0 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"

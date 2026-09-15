@@ -1,7 +1,7 @@
 import type { SongData } from "./song-data";
 
 export const demoSongData: SongData = [
-  { id: 1, title: "Midnight Current", tags: ["JAZZ"], song: "" },
+  { id: 1, title: "Midnight Current", tags: ["jazz"], song: "" },
   { id: 2, title: "Blue Room Shuffle", tags: ["blues"], song: "" },
   { id: 3, title: "Static on the Radio", tags: ["rock"], song: "" },
   { id: 4, title: "After Hours", tags: ["jazz", "blues"], song: "" },

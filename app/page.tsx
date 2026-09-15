@@ -7,6 +7,7 @@ import { demoSongData } from "../lib/demo-song-data";
 import {
   createSong,
   deleteSong,
+  formatSongTags,
   initializeSongData,
   saveSongData,
   type SongData,
@@ -156,7 +157,7 @@ export default function Home() {
                   onPointerUp={cancelDeleteTimer}
                 >
                   <strong className="block">{song.title}</strong>
-                  <p className="text-sm text-zinc-600">{song.tags.join(", ")}</p>
+                  <p className="text-sm text-zinc-600">{formatSongTags(song.tags)}</p>
                 </Link>
                 {selectedSongId === song.id && (
                   <button

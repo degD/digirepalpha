@@ -100,16 +100,19 @@ export function normalizeSongTags(tags: string[]): string[] {
   const tagNames = new Set<string>();
 
   for (const tag of tags) {
-    const normalizedTag = tag.trim();
-    const tagName = normalizedTag.toLocaleLowerCase();
+    const normalizedTag = tag.trim().toLocaleLowerCase();
 
-    if (normalizedTag && !tagNames.has(tagName)) {
+    if (normalizedTag && !tagNames.has(normalizedTag)) {
       normalizedTags.push(normalizedTag);
-      tagNames.add(tagName);
+      tagNames.add(normalizedTag);
     }
   }
 
   return normalizedTags;
+}
+
+export function formatSongTags(tags: string[]): string {
+  return normalizeSongTags(tags).join(", ");
 }
 
 export function updateSongMetadata(

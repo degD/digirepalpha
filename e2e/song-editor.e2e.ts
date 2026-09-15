@@ -202,7 +202,7 @@ test("edits song metadata without replacing editor text or undo history", async 
   await page.getByRole("button", { name: "Edit" }).click();
   const dialog = page.getByRole("dialog", { name: "Edit song details" });
   await dialog.getByLabel("Title").fill("  Updated Song  ");
-  await dialog.getByLabel("Tags", { exact: true }).selectOption("JAZZ");
+  await dialog.getByLabel("Tags", { exact: true }).selectOption("jazz");
   await dialog.getByLabel("Add new tag").fill(" Live ");
   await dialog.getByRole("button", { name: "Add" }).click();
   await dialog.getByLabel("Add new tag").fill("live");
@@ -211,9 +211,10 @@ test("edits song metadata without replacing editor text or undo history", async 
   await dialog.getByRole("button", { name: "Save details" }).click();
 
   await expect(page.getByRole("heading", { name: "Updated Song" })).toBeVisible();
+  await expect(page.getByText("jazz, live", { exact: true })).toBeVisible();
   await expect.poll(() => savedSong(page, 2)).toMatchObject({
     title: "Updated Song",
-    tags: ["JAZZ", "Live"],
+    tags: ["jazz", "live"],
     song: "Original revised",
   });
 

@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   createSong,
   deleteSong,
+  formatSongTags,
   initializeSongData,
   loadSongData,
   normalizeSongTags,
@@ -148,11 +149,16 @@ describe("song data storage", () => {
     assert.deepEqual(updateSongText(songs, 2, "New lyrics"), songs);
   });
 
-  it("normalizes tags by trimming and deduplicating without changing casing", () => {
+  it("normalizes tags by trimming, lowercasing, and deduplicating", () => {
     assert.deepEqual(normalizeSongTags([" jazz ", "JAZZ", "", "Rock", " rock "]), [
       "jazz",
-      "Rock",
+      "rock",
     ]);
+  });
+
+  it("formats tags for display in lowercase", () => {
+    assert.equal(formatSongTags([" JAZZ ", "Rock", "ROCK"]), "jazz, rock");
+    assert.equal(formatSongTags([]), "");
   });
 
   it("updates song metadata without replacing its text", () => {

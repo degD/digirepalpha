@@ -188,3 +188,10 @@ database import and export workflows.
 
 Add Android support with Capacitor.js. The app is statically exported, bundled
 offline, and supports native backup sharing through the Android share sheet.
+
+## v0.11 [COMPLETE]
+
+Autoselect. Tag and title changing editing. Holding the mouse still selects the
+word under the pointer, while Android keeps its native touch long-press
+selection. Song details are edited in a dialog with a tag dropdown, an add-tag
+field, and case-insensitive tag deduplication.

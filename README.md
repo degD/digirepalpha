@@ -26,7 +26,7 @@ bunx playwright install chromium webkit
 bun run test:e2e
 ```
 
-The Playwright suite runs independently in desktop Chromium and WebKit. It covers search, song creation and deletion, editor persistence and chord controls, routing states, and complete database import/export workflows.
+The Playwright suite runs independently in desktop Chromium and WebKit. It covers search, song creation and deletion, editor persistence, chord controls, long-press word selection, song detail editing, routing states, and complete database import/export workflows.
 
 ## Android
 

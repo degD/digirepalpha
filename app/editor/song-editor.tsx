@@ -24,7 +24,8 @@ const toolButtonClassName =
 function editorTheme(fontSize: number) {
   return EditorView.theme({
     "&": {
-      minHeight: "24rem",
+      flex: "1 1 auto",
+      minHeight: "0",
       border: "1px solid var(--color-zinc-200)",
       borderRadius: "0.75rem",
       overflow: "hidden",
@@ -34,12 +35,16 @@ function editorTheme(fontSize: number) {
       outlineOffset: "2px",
     },
     ".cm-content": {
-      minHeight: "24rem",
       padding: "1rem",
       fontFamily: "inherit",
       fontSize: `${fontSize}px`,
     },
-    ".cm-scroller": { fontFamily: "inherit" },
+    ".cm-scroller": {
+      flex: "1 1 0%",
+      minHeight: "0",
+      fontFamily: "inherit",
+      overflow: "auto",
+    },
     ".digirep-chord": { color: "#7c3aed", fontWeight: "600" },
   });
 }
@@ -368,7 +373,7 @@ export function SongEditor({ songId }: { songId: number }) {
           <FontSizeIcon direction="up" />
         </button>
       </div>
-      <div ref={editorContainerRef} />
+      <div className="flex min-h-0 flex-1 flex-col" ref={editorContainerRef} />
       {isEditingMetadata && (
         <div
           aria-labelledby="edit-song-details-title"

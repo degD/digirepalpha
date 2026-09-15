@@ -106,6 +106,38 @@ function FontSizeIcon({ direction }: { direction: "up" | "down" }) {
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
 export function SongEditor({ songId }: { songId: number }) {
   const editorContainerRef = useRef<HTMLDivElement>(null);
   const editorViewRef = useRef<EditorView>(null);
@@ -382,35 +414,41 @@ export function SongEditor({ songId }: { songId: number }) {
           role="dialog"
         >
           <form
-            className="w-full max-w-md rounded-t-lg bg-white p-4 shadow-lg sm:rounded-lg"
+            className="w-full max-w-xl rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
             onSubmit={handleSaveMetadata}
           >
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold" id="edit-song-details-title">
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="text-xl font-bold tracking-tight" id="edit-song-details-title">
                 Edit song details
               </h2>
               <button
-                className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                className="h-10 shrink-0 rounded-lg bg-zinc-100 px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-200 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
                 onClick={() => setIsEditingMetadata(false)}
                 type="button"
               >
                 Cancel
               </button>
             </div>
-            <label className="mt-4 block text-sm font-medium" htmlFor="song-title">
+            <label
+              className="mt-5 block text-sm font-medium text-zinc-700"
+              htmlFor="song-title"
+            >
               Title
             </label>
             <input
-              className="mt-1 h-10 w-full rounded border border-zinc-300 px-3 outline-none focus:border-zinc-950"
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               id="song-title"
               onChange={(event) => setTitleDraft(event.target.value)}
               value={titleDraft}
             />
-            <label className="mt-4 block text-sm font-medium" htmlFor="song-tag-select">
+            <label
+              className="mt-5 block text-sm font-medium text-zinc-700"
+              htmlFor="song-tag-select"
+            >
               Tags
             </label>
             <select
-              className="mt-1 h-10 w-full rounded border border-zinc-300 bg-white px-3 outline-none focus:border-zinc-950"
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               id="song-tag-select"
               onChange={(event) => {
                 if (event.target.value) {
@@ -430,38 +468,45 @@ export function SongEditor({ songId }: { songId: number }) {
               ))}
             </select>
             {selectedTags.length > 0 && (
-              <ul className="mt-2 flex flex-wrap gap-2" aria-label="Current selected tags">
+              <ul className="mt-3 flex flex-wrap gap-2" aria-label="Current selected tags">
                 {selectedTags.map((tag) => (
                   <li key={tag}>
                     <button
-                      className={`rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950`}
+                      aria-label={`Remove ${tag}`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} transition focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950`}
                       onClick={() =>
                         setSelectedTags((tags) => tags.filter((item) => item !== tag))
                       }
                       type="button"
                     >
-                      Remove {tag}
+                      {tag}
+                      <CloseIcon />
                     </button>
                   </li>
                 ))}
               </ul>
             )}
-            <label className="mt-4 block text-sm font-medium" htmlFor="new-song-tag">
+            <label
+              className="mt-5 block text-sm font-medium text-zinc-700"
+              htmlFor="new-song-tag"
+            >
               Add new tag
             </label>
-            <div className="mt-1 flex gap-2">
+            <div className="mt-2 flex gap-2">
               <input
-                className="h-10 min-w-0 flex-1 rounded border border-zinc-300 px-3 outline-none focus:border-zinc-950"
+                className="h-11 min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                 id="new-song-tag"
                 onChange={(event) => setNewTag(event.target.value)}
+                placeholder="Enter a tag name..."
                 value={newTag}
               />
               <button
-                className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                aria-label="Add"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
                 onClick={handleAddTag}
                 type="button"
               >
-                Add
+                <PlusIcon />
               </button>
             </div>
             {metadataError && (
@@ -469,12 +514,14 @@ export function SongEditor({ songId }: { songId: number }) {
                 {metadataError}
               </p>
             )}
-            <button
-              className="mt-4 h-10 rounded bg-zinc-950 px-3 font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
-              type="submit"
-            >
-              Save details
-            </button>
+            <div className="mt-5 border-t border-zinc-100 pt-5">
+              <button
+                className="h-11 rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+                type="submit"
+              >
+                Save details
+              </button>
+            </div>
           </form>
         </div>
       )}

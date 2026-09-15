@@ -6,8 +6,8 @@ import { loadSongData, saveSongData } from "../../lib/song-data";
 import {
   parseSongDataBackup,
   serializeSongData,
-  SONG_DATA_BACKUP_FILE_NAME,
 } from "../../lib/song-data-transfer";
+import { exportSongDataBackup } from "../../lib/song-data-export";
 
 export function DataManager() {
   const [status, setStatus] = useState("");
@@ -15,20 +15,10 @@ export function DataManager() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  function handleExport() {
+  async function handleExport() {
     try {
       const songData = loadSongData();
-      const backup = new Blob([serializeSongData(songData)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(backup);
-      const download = document.createElement("a");
-
-      download.href = url;
-      download.download = SONG_DATA_BACKUP_FILE_NAME;
-      download.click();
-      window.setTimeout(() => URL.revokeObjectURL(url), 0);
-      setStatus("Backup download started.");
+      setStatus(await exportSongDataBackup(serializeSongData(songData)));
     } catch {
       setStatus("Could not export the song database.");
     }
@@ -78,7 +68,7 @@ export function DataManager() {
         <div>
           <h2 className="font-semibold">Export</h2>
           <p className="text-sm text-zinc-600">
-            Download all songs as a <code>db.songs</code> backup file.
+            Export all songs as a <code>db.songs</code> backup file.
           </p>
         </div>
         <button

@@ -211,7 +211,8 @@ test("edits song metadata without replacing editor text or undo history", async 
   await dialog.getByRole("button", { name: "Save details" }).click();
 
   await expect(page.getByRole("heading", { name: "Updated Song" })).toBeVisible();
-  await expect(page.getByText("jazz, live", { exact: true })).toBeVisible();
+  await expect(page.getByText("jazz", { exact: true })).toBeVisible();
+  await expect(page.getByText("live", { exact: true })).toBeVisible();
   await expect.poll(() => savedSong(page, 2)).toMatchObject({
     title: "Updated Song",
     tags: ["jazz", "live"],

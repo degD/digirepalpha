@@ -9,7 +9,6 @@ import { chordifySelection, transposeSongChords } from "../../lib/chord-format";
 import { demoSongData } from "../../lib/demo-song-data";
 import { longPressWordSelection } from "../../lib/long-press-selection";
 import {
-  formatSongTags,
   initializeSongData,
   normalizeSongTags,
   saveSongData,
@@ -17,24 +16,89 @@ import {
   updateSongMetadata,
   updateSongText,
 } from "../../lib/song-data";
+import { tagClassName } from "../../lib/tag-style";
+
+const toolButtonClassName =
+  "inline-flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 disabled:cursor-not-allowed disabled:opacity-40";
 
 function editorTheme(fontSize: number) {
   return EditorView.theme({
     "&": {
       minHeight: "24rem",
-      border: "1px solid var(--color-zinc-300)",
-      borderRadius: "0.25rem",
+      border: "1px solid var(--color-zinc-200)",
+      borderRadius: "0.75rem",
+      overflow: "hidden",
     },
-    "&.cm-focused": { outline: "2px solid var(--color-zinc-950)", outlineOffset: "2px" },
+    "&.cm-focused": {
+      outline: "2px solid var(--color-indigo-500)",
+      outlineOffset: "2px",
+    },
     ".cm-content": {
       minHeight: "24rem",
-      padding: "0.75rem",
+      padding: "1rem",
       fontFamily: "inherit",
       fontSize: `${fontSize}px`,
     },
     ".cm-scroller": { fontFamily: "inherit" },
     ".digirep-chord": { color: "#7c3aed", fontWeight: "600" },
   });
+}
+
+function TransposeIcon({ direction }: { direction: "up" | "down" }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <ellipse cx="7" cy="17.5" fill="currentColor" rx="3" ry="2.3" stroke="none" />
+      <path d="M10 17.5V5l4 1.2" />
+      {direction === "down" ? (
+        <path d="M15.5 12.5h4" />
+      ) : (
+        <path d="M17.5 10.5v4M15.5 12.5h4" />
+      )}
+    </svg>
+  );
+}
+
+function ChordifyIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <ellipse cx="7" cy="17.5" fill="currentColor" rx="3" ry="2.3" stroke="none" />
+      <path d="M10 17.5V5l4 1.2" />
+      <path
+        d="M17.5 7.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"
+        fill="currentColor"
+        stroke="none"
+      />
+    </svg>
+  );
+}
+
+function FontSizeIcon({ direction }: { direction: "up" | "down" }) {
+  return (
+    <span aria-hidden="true" className="flex items-center text-zinc-700">
+      <span className="text-base font-bold leading-none">A</span>
+      <span className="ml-0.5 text-xs font-bold leading-none">
+        {direction === "up" ? "+" : "−"}
+      </span>
+    </span>
+  );
 }
 
 export function SongEditor({ songId }: { songId: number }) {
@@ -231,60 +295,77 @@ export function SongEditor({ songId }: { songId: number }) {
     return <p className="text-sm text-zinc-600">Song not found.</p>;
   }
 
+  const tags = normalizeSongTags(song.tags);
+
   return (
     <>
-      <header>
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-semibold">{song.title}</h1>
-            <p className="text-sm text-zinc-600">{formatSongTags(song.tags)}</p>
-          </div>
-          <button
-            className="h-10 shrink-0 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
-            onClick={handleEditMetadata}
-            type="button"
-          >
-            Edit
-          </button>
+      <header className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold tracking-tight">{song.title}</h1>
+          {tags.length > 0 && (
+            <ul className="mt-2 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <li key={tag}>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${tagClassName(tag)}`}
+                  >
+                    {tag}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </header>
-      <div aria-label="Editor tools" className="flex flex-wrap gap-2">
         <button
-          className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          className="h-10 shrink-0 rounded-lg border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          onClick={handleEditMetadata}
+          type="button"
+        >
+          Edit
+        </button>
+      </header>
+      <div aria-label="Editor tools" className="flex flex-wrap gap-3" role="toolbar">
+        <button
+          aria-label="Transpose -"
+          className={toolButtonClassName}
           onClick={() => handleTranspose(-1)}
           type="button"
         >
-          Transpose -
+          <TransposeIcon direction="down" />
         </button>
         <button
-          className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          aria-label="Transpose +"
+          className={toolButtonClassName}
           onClick={() => handleTranspose(1)}
           type="button"
         >
-          Transpose +
+          <TransposeIcon direction="up" />
         </button>
         <button
-          className="h-10 rounded border border-zinc-300 px-3 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          aria-label="Chordify"
+          className={toolButtonClassName}
           onClick={handleChordify}
           type="button"
         >
-          Chordify
+          <ChordifyIcon />
         </button>
         <button
-          className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
+          aria-label="Size -"
+          className={toolButtonClassName}
           disabled={fontSize === 12}
           onClick={() => setFontSize((size) => size - 2)}
           type="button"
         >
-          Size -
+          <FontSizeIcon direction="down" />
         </button>
         <button
-          className="h-10 rounded border border-zinc-300 px-3 font-medium disabled:cursor-not-allowed disabled:opacity-50"
+          aria-label="Size +"
+          className={toolButtonClassName}
           disabled={fontSize === 32}
           onClick={() => setFontSize((size) => size + 2)}
           type="button"
         >
-          Size +
+          <FontSizeIcon direction="up" />
         </button>
       </div>
       <div ref={editorContainerRef} />
@@ -348,7 +429,7 @@ export function SongEditor({ songId }: { songId: number }) {
                 {selectedTags.map((tag) => (
                   <li key={tag}>
                     <button
-                      className="rounded bg-zinc-100 px-2 py-1 text-sm focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                      className={`rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950`}
                       onClick={() =>
                         setSelectedTags((tags) => tags.filter((item) => item !== tag))
                       }

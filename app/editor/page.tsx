@@ -2,14 +2,33 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { EditorRoute } from "./editor-route";
 
+function BackIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M19 12H5" />
+      <path d="m11 18-6-6 6-6" />
+    </svg>
+  );
+}
+
 export default function EditorPage() {
   return (
-    <main className="min-h-0 flex-1 bg-white px-4 py-4 text-zinc-950">
-      <div className="mx-auto flex max-w-4xl flex-col gap-4">
+    <main className="min-h-0 flex-1 bg-zinc-50 px-4 py-6 text-zinc-950">
+      <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 rounded-2xl border border-zinc-100 bg-white p-5 shadow-sm sm:p-6">
         <Link
-          className="w-fit rounded px-1 py-1 font-medium underline focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          className="inline-flex w-fit items-center gap-1.5 rounded-lg font-medium text-indigo-600 transition hover:text-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
           href="/"
         >
+          <BackIcon />
           Back
         </Link>
         <Suspense fallback={<p className="text-sm text-zinc-600">Loading song...</p>}>

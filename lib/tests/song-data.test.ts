@@ -3,7 +3,6 @@ import { describe, it } from "node:test";
 import {
   createSong,
   deleteSong,
-  formatSongTags,
   initializeSongData,
   loadSongData,
   normalizeSongTags,
@@ -154,11 +153,6 @@ describe("song data storage", () => {
       "jazz",
       "rock",
     ]);
-  });
-
-  it("formats tags for display in lowercase", () => {
-    assert.equal(formatSongTags([" JAZZ ", "Rock", "ROCK"]), "jazz, rock");
-    assert.equal(formatSongTags([]), "");
   });
 
   it("updates song metadata without replacing its text", () => {

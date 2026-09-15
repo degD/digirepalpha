@@ -62,7 +62,8 @@ test("navigates between search, editor, and data pages", async ({ page }) => {
   await songLink(page, 7).click();
   await expect(page).toHaveURL("/editor/?id=7");
   await expect(page.getByRole("heading", { name: "Route Song" })).toBeVisible();
-  await expect(page.getByText("folk, live", { exact: true })).toBeVisible();
+  await expect(page.getByText("folk", { exact: true })).toBeVisible();
+  await expect(page.getByText("live", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Back" })).toBeVisible();
 
   await page.getByRole("link", { name: "Back" }).click();

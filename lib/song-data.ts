@@ -111,10 +111,6 @@ export function normalizeSongTags(tags: string[]): string[] {
   return normalizedTags;
 }
 
-export function formatSongTags(tags: string[]): string {
-  return normalizeSongTags(tags).join(", ");
-}
-
 export function updateSongMetadata(
   songData: SongData,
   songId: number,

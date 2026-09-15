@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { chordEditor, chordProtectedEditing } from "../../lib/chord-editor";
 import { chordifySelection, transposeSongChords } from "../../lib/chord-format";
 import { demoSongData } from "../../lib/demo-song-data";
+import { longPressWordSelection } from "../../lib/long-press-selection";
 import {
   initializeSongData,
   normalizeSongTags,
@@ -81,6 +82,7 @@ export function SongEditor({ songId }: { songId: number }) {
           EditorView.lineWrapping,
           chordEditor,
           chordProtectedEditing,
+          longPressWordSelection,
           EditorView.contentAttributes.of({ "aria-label": "Song text" }),
           fontSizeCompartment.current.of(editorTheme(16)),
           EditorView.updateListener.of((update) => {

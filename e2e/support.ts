@@ -39,6 +39,41 @@ export function editor(page: Page): Locator {
   return page.getByRole("textbox", { name: "Song text" });
 }
 
+export async function wordCenter(
+  page: Page,
+  word: string,
+): Promise<{ x: number; y: number }> {
+  await page.locator(".cm-content").waitFor();
+
+  return page.evaluate((targetWord) => {
+    const content = document.querySelector(".cm-content");
+
+    if (!content) {
+      throw new Error("Editor content not found.");
+    }
+
+    const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+
+    while (node) {
+      const index = node.textContent?.indexOf(targetWord) ?? -1;
+
+      if (index >= 0) {
+        const range = document.createRange();
+        range.setStart(node, index);
+        range.setEnd(node, index + targetWord.length);
+        const rect = range.getBoundingClientRect();
+
+        return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+      }
+
+      node = walker.nextNode();
+    }
+
+    throw new Error(`Word not found in the editor: ${targetWord}`);
+  }, word);
+}
+
 export function songLink(page: Page, id: number): Locator {
   return page.locator(`a[href="/editor/?id=${id}"]`);
 }

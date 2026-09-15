@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { editor, savedSong, seedSongs } from "./support";
+import { editor, savedSong, seedSongs, wordCenter } from "./support";
 
 test("autosaves the edited record and resets temporary font size after reload", async ({
   page,
@@ -220,6 +220,112 @@ test("edits song metadata without replacing editor text or undo history", async 
   await songEditor.click();
   await page.keyboard.press("ControlOrMeta+Z");
   await expect.poll(() => savedSong(page, 2)).toMatchObject({ song: "Original" });
+});
+
+test("selects the word under a held mouse press", async ({ page }) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "quick brown fox" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  const { x, y } = await wordCenter(page, "brown");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+
+  await page.keyboard.type("X");
+  await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "quick X fox" });
+});
+
+test("does not select a word on a quick click", async ({ page }) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "quick brown fox" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  const { x, y } = await wordCenter(page, "brown");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.up();
+  await page.waitForTimeout(600);
+
+  await page.keyboard.type("X");
+  await expect
+    .poll(async () => (await savedSong(page, 1))?.song)
+    .toMatch(/^quick .{6} fox$/);
+});
+
+test("keeps the dragged selection when the mouse moves during a press", async ({
+  page,
+}) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "quick brown fox" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  const { x, y } = await wordCenter(page, "brown");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 60, y, { steps: 5 });
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+
+  await page.keyboard.type("X");
+  await expect
+    .poll(async () => (await savedSong(page, 1))?.song)
+    .not.toContain("fox");
+});
+
+test("selects words in chord-decorated lines", async ({ page }) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "<Em>hold tight" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  const { x, y } = await wordCenter(page, "tight");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+
+  await page.keyboard.type("X");
+  await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "<Em>hold X" });
+});
+
+test("ignores touch pointers so native long-press selection is kept", async ({
+  page,
+}) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "quick brown fox" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  await editor(page).click();
+  await page.keyboard.press("ControlOrMeta+End");
+
+  const { x, y } = await wordCenter(page, "brown");
+  await page.evaluate(
+    ({ x: clientX, y: clientY }) => {
+      document.querySelector(".cm-content")?.dispatchEvent(
+        new PointerEvent("pointerdown", {
+          bubbles: true,
+          button: 0,
+          buttons: 1,
+          clientX,
+          clientY,
+          pointerType: "touch",
+        }),
+      );
+    },
+    { x, y },
+  );
+  await page.waitForTimeout(600);
+
+  await page.keyboard.type("X");
+  await expect.poll(async () => (await savedSong(page, 1))?.song).toBe(
+    "quick brown foxX",
+  );
 });
 
 test("requires a non-empty title when editing song metadata", async ({ page }) => {

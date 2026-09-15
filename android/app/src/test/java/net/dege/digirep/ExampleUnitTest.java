@@ -1,4 +1,4 @@
-package com.getcapacitor.myapp;
+package net.dege.digirep;
 
 import static org.junit.Assert.*;
 

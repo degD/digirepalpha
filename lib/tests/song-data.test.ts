@@ -44,6 +44,15 @@ describe("song data storage", () => {
     });
   });
 
+  it("creates a song with normalized tags", () => {
+    assert.deepEqual(createSong(songs, "  Tagged  ", [" Jazz ", "JAZZ", ""]), {
+      id: 2,
+      title: "Tagged",
+      tags: ["jazz"],
+      song: "",
+    });
+  });
+
   it("deletes only the selected song", () => {
     const otherSong = { ...songs[0], id: 2, title: "Other Song" };
 

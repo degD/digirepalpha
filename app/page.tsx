@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { demoSongData } from "../lib/demo-song-data";
@@ -49,11 +55,11 @@ function SearchIcon() {
   );
 }
 
-function PlusIcon() {
+function PlusIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
-      className="h-4 w-4"
+      className={className}
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -61,6 +67,22 @@ function PlusIcon() {
       viewBox="0 0 24 24"
     >
       <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function CloseIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+    >
+      <path d="M6 6l12 12M18 6 6 18" />
     </svg>
   );
 }
@@ -85,6 +107,12 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [songData, setSongData] = useState<SongData>([]);
   const [selectedSongId, setSelectedSongId] = useState<number | null>(null);
+  const [isAddingSong, setIsAddingSong] = useState(false);
+  const [newSongTitle, setNewSongTitle] = useState("");
+  const [newSongTags, setNewSongTags] = useState<string[]>([]);
+  const [newSongTagInput, setNewSongTagInput] = useState("");
+  const [newSongTagOptions, setNewSongTagOptions] = useState<string[]>([]);
+  const [newSongError, setNewSongError] = useState("");
   const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressLinkClickRef = useRef(false);
   const router = useRouter();
@@ -117,17 +145,35 @@ export default function Home() {
   }`;
 
   function handleNewSong() {
-    const title = window.prompt("Song title");
+    setNewSongTitle("");
+    setNewSongTags([]);
+    setNewSongTagInput("");
+    setNewSongTagOptions(normalizeSongTags(songData.flatMap((song) => song.tags)));
+    setNewSongError("");
+    setIsAddingSong(true);
+  }
 
-    if (!title?.trim()) {
+  function handleAddNewSongTag() {
+    setNewSongTags((tags) => normalizeSongTags([...tags, newSongTagInput]));
+    setNewSongTagInput("");
+  }
+
+  function handleCreateSong(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const title = newSongTitle.trim();
+
+    if (!title) {
+      setNewSongError("A song title is required.");
       return;
     }
 
-    const song = createSong(songData, title);
+    const song = createSong(songData, title, newSongTags);
     const updatedSongData = [...songData, song];
 
     saveSongData(updatedSongData);
     setSongData(updatedSongData);
+    setIsAddingSong(false);
     router.push(`/editor/?id=${song.id}`);
   }
 
@@ -267,6 +313,130 @@ export default function Home() {
           )}
         </div>
       </section>
+      {isAddingSong && (
+        <div
+          aria-labelledby="add-song-title"
+          aria-modal="true"
+          className="fixed inset-0 z-10 flex items-end bg-black/40 sm:items-center sm:justify-center sm:p-4"
+          role="dialog"
+        >
+          <form
+            className="w-full max-w-lg rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
+            onSubmit={handleCreateSong}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="text-xl font-bold tracking-tight" id="add-song-title">
+                Add new song
+              </h2>
+              <button
+                aria-label="Close"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                onClick={() => setIsAddingSong(false)}
+                type="button"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <label
+              className="mt-5 block text-sm font-medium text-zinc-700"
+              htmlFor="new-song-title"
+            >
+              Song title
+            </label>
+            <input
+              autoFocus
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              id="new-song-title"
+              onChange={(event) => setNewSongTitle(event.target.value)}
+              placeholder="Enter song title..."
+              value={newSongTitle}
+            />
+            <label
+              className="mt-5 block text-sm font-medium text-zinc-700"
+              htmlFor="new-song-tag-select"
+            >
+              Tags
+            </label>
+            <select
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              id="new-song-tag-select"
+              onChange={(event) => {
+                if (event.target.value) {
+                  setNewSongTags((tags) =>
+                    normalizeSongTags([...tags, event.target.value]),
+                  );
+                  event.target.value = "";
+                }
+              }}
+              value=""
+            >
+              <option value="">Select existing tag</option>
+              {newSongTagOptions.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+            {newSongTags.length > 0 && (
+              <ul aria-label="Selected tags" className="mt-3 flex flex-wrap gap-2">
+                {newSongTags.map((tag) => (
+                  <li key={tag}>
+                    <button
+                      aria-label={`Remove ${tag}`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950`}
+                      onClick={() =>
+                        setNewSongTags((tags) => tags.filter((item) => item !== tag))
+                      }
+                      type="button"
+                    >
+                      {tag}
+                      <CloseIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-5 flex gap-2">
+              <input
+                aria-label="Or add a new tag"
+                className="h-11 min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                id="new-song-tag-input"
+                onChange={(event) => setNewSongTagInput(event.target.value)}
+                placeholder="Or add a new tag..."
+                value={newSongTagInput}
+              />
+              <button
+                aria-label="Add tag"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+                onClick={handleAddNewSongTag}
+                type="button"
+              >
+                <PlusIcon className="h-5 w-5" />
+              </button>
+            </div>
+            {newSongError && (
+              <p className="mt-3 text-sm text-red-700" role="alert">
+                {newSongError}
+              </p>
+            )}
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                className="h-10 rounded-lg bg-zinc-100 px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-200 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                onClick={() => setIsAddingSong(false)}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="h-10 rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+                type="submit"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </main>
   );
 }

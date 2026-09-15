@@ -8,12 +8,10 @@ test("creates, edits, and persists a new song", async ({ page }) => {
   ]);
   await page.goto("/");
 
-  page.once("dialog", async (dialog) => {
-    expect(dialog.type()).toBe("prompt");
-    expect(dialog.message()).toBe("Song title");
-    await dialog.accept("  New Song  ");
-  });
   await page.getByRole("button", { name: "New Song" }).click();
+  const addDialog = page.getByRole("dialog", { name: "Add new song" });
+  await addDialog.getByLabel("Song title").fill("  New Song  ");
+  await addDialog.getByRole("button", { name: "Add", exact: true }).click();
 
   await expect(page).toHaveURL("/editor/?id=9");
   await expect(page.getByRole("heading", { name: "New Song" })).toBeVisible();
@@ -39,23 +37,30 @@ test("creates, edits, and persists a new song", async ({ page }) => {
   });
 });
 
-test("does not create songs for cancelled or blank prompts and allows duplicate titles", async ({
+test("does not create songs for cancelled or blank titles and allows duplicate titles", async ({
   page,
 }) => {
   const songs = [{ id: 1, title: "Duplicate", tags: [], song: "" }];
   await seedSongs(page, songs);
   await page.goto("/");
 
-  page.once("dialog", (dialog) => dialog.dismiss());
+  const addDialog = page.getByRole("dialog", { name: "Add new song" });
+
   await page.getByRole("button", { name: "New Song" }).click();
+  await addDialog.getByRole("button", { name: "Cancel" }).click();
+  await expect(addDialog).toHaveCount(0);
   await expect.poll(() => savedSongs(page)).toEqual(songs);
 
-  page.once("dialog", (dialog) => dialog.accept("   "));
   await page.getByRole("button", { name: "New Song" }).click();
+  await addDialog.getByLabel("Song title").fill("   ");
+  await addDialog.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(addDialog.getByRole("alert")).toHaveText("A song title is required.");
+  await addDialog.getByRole("button", { name: "Cancel" }).click();
   await expect.poll(() => savedSongs(page)).toEqual(songs);
 
-  page.once("dialog", (dialog) => dialog.accept("Duplicate"));
   await page.getByRole("button", { name: "New Song" }).click();
+  await addDialog.getByLabel("Song title").fill("Duplicate");
+  await addDialog.getByRole("button", { name: "Add", exact: true }).click();
   await expect(page).toHaveURL("/editor/?id=2");
   await expect.poll(() => savedSongs(page)).toEqual([
     ...songs,

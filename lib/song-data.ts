@@ -132,13 +132,17 @@ export function updateSongMetadata(
   );
 }
 
-export function createSong(songData: SongData, title: string): SongItem {
+export function createSong(
+  songData: SongData,
+  title: string,
+  tags: string[] = [],
+): SongItem {
   const nextId = Math.max(0, ...songData.map((song) => song.id)) + 1;
 
   return {
     id: nextId,
     title: title.trim(),
-    tags: [],
+    tags: normalizeSongTags(tags),
     song: "",
   };
 }

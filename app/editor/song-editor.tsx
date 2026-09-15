@@ -61,12 +61,12 @@ function TransposeIcon({ direction }: { direction: "up" | "down" }) {
       strokeWidth="1.8"
       viewBox="0 0 24 24"
     >
-      <ellipse cx="7" cy="17.5" fill="currentColor" rx="3" ry="2.3" stroke="none" />
-      <path d="M10 17.5V5l4 1.2" />
+      <ellipse cx="6" cy="17.5" fill="currentColor" rx="2.7" ry="2" stroke="none" />
+      <path d="M8.7 17.5V5l3.3 1" />
       {direction === "down" ? (
-        <path d="M15.5 12.5h4" />
+        <path d="M14.5 12.5h6" strokeWidth="2.2" />
       ) : (
-        <path d="M17.5 10.5v4M15.5 12.5h4" />
+        <path d="M17.5 9.5v6M14.5 12.5h6" strokeWidth="2.2" />
       )}
     </svg>
   );
@@ -77,20 +77,11 @@ function ChordifyIcon() {
     <svg
       aria-hidden="true"
       className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.8"
+      fill="currentColor"
       viewBox="0 0 24 24"
     >
-      <ellipse cx="7" cy="17.5" fill="currentColor" rx="3" ry="2.3" stroke="none" />
-      <path d="M10 17.5V5l4 1.2" />
-      <path
-        d="M17.5 7.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"
-        fill="currentColor"
-        stroke="none"
-      />
+      <path d="M10.5 2.5 12.6 8l5.4 2.1-5.4 2.1-2.1 5.5-2.1-5.5L3 10.1 8.4 8z" />
+      <path d="m18.5 13.5.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9z" />
     </svg>
   );
 }

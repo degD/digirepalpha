@@ -19,24 +19,8 @@ import {
 } from "../lib/song-data";
 import { searchSongs } from "../lib/song-search";
 import { tagClassName } from "../lib/tag-style";
+import { BrandMark } from "./brand-mark";
 import { ThemeToggle } from "./theme-toggle";
-
-function BrandMark() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <rect height="6" rx="1.25" width="2.5" x="1" y="9" />
-      <rect height="14" rx="1.25" width="2.5" x="6" y="5" />
-      <rect height="20" rx="1.25" width="2.5" x="11" y="2" />
-      <rect height="12" rx="1.25" width="2.5" x="16" y="6" />
-      <rect height="4" rx="1.25" width="2.5" x="21" y="10" />
-    </svg>
-  );
-}
 
 function SearchIcon() {
   return (
@@ -224,7 +208,9 @@ export default function Home() {
       <header className="shrink-0 border-b border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
-            <BrandMark />
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg dark:bg-white">
+              <BrandMark className="h-6 w-6" />
+            </span>
             <span className="text-xl font-bold tracking-tight">DigiRep</span>
           </div>
           <div className="relative sm:flex-1">

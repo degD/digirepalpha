@@ -96,6 +96,7 @@ export default function Home() {
   const [newSongTags, setNewSongTags] = useState<string[]>([]);
   const [newSongTagInput, setNewSongTagInput] = useState("");
   const [newSongTagOptions, setNewSongTagOptions] = useState<string[]>([]);
+  const [newSongTagSelectKey, setNewSongTagSelectKey] = useState(0);
   const [newSongError, setNewSongError] = useState("");
   const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressLinkClickRef = useRef(false);
@@ -346,16 +347,19 @@ export default function Home() {
             </label>
             <select
               className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
+              defaultValue=""
               id="new-song-tag-select"
+              key={newSongTagSelectKey}
               onChange={(event) => {
-                if (event.target.value) {
-                  setNewSongTags((tags) =>
-                    normalizeSongTags([...tags, event.target.value]),
-                  );
-                  event.target.value = "";
+                const tag = event.target.value;
+
+                if (!tag) {
+                  return;
                 }
+
+                setNewSongTags((tags) => normalizeSongTags([...tags, tag]));
+                setNewSongTagSelectKey((key) => key + 1);
               }}
-              value=""
             >
               <option value="">Select existing tag</option>
               {newSongTagOptions.map((tag) => (

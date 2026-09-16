@@ -149,6 +149,7 @@ export function SongEditor({ songId }: { songId: number }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [tagOptions, setTagOptions] = useState<string[]>([]);
+  const [tagSelectKey, setTagSelectKey] = useState(0);
   const [metadataError, setMetadataError] = useState("");
 
   useEffect(() => {
@@ -285,6 +286,7 @@ export function SongEditor({ songId }: { songId: number }) {
     setSelectedTags(normalizeSongTags(song.tags));
     setNewTag("");
     setTagOptions(normalizeSongTags(songData.flatMap((item) => item.tags)));
+    setTagSelectKey((key) => key + 1);
     setMetadataError("");
     setIsEditingMetadata(true);
   }
@@ -448,16 +450,19 @@ export function SongEditor({ songId }: { songId: number }) {
             </label>
             <select
               className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
+              defaultValue=""
               id="song-tag-select"
+              key={tagSelectKey}
               onChange={(event) => {
-                if (event.target.value) {
-                  setSelectedTags(
-                    normalizeSongTags([...selectedTags, event.target.value]),
-                  );
-                  event.target.value = "";
+                const tag = event.target.value;
+
+                if (!tag) {
+                  return;
                 }
+
+                setSelectedTags((tags) => normalizeSongTags([...tags, tag]));
+                setTagSelectKey((key) => key + 1);
               }}
-              value=""
             >
               <option value="">Select an existing tag</option>
               {tagOptions.map((tag) => (

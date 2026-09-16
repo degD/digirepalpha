@@ -2,6 +2,14 @@
 
 Digital repertoire manager built with Next.js, CodeMirror, and browser-local storage.
 
+## Screenshots
+
+![](./metadata/en-US/images/phoneScreenshots/1.png)
+![](./metadata/en-US/images/phoneScreenshots/2.png)
+![](./metadata/en-US/images/phoneScreenshots/3.png)
+![](./metadata/en-US/images/phoneScreenshots/4.png)
+![](./metadata/en-US/images/phoneScreenshots/5.png)
+
 ## Setup
 
 This project uses Bun `1.3.14` (see `package.json`). Install dependencies before

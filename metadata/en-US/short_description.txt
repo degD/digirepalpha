@@ -1,0 +1,1 @@
+Digital repertoire manager built with Next.js, CodeMirror, and browser-local storage.

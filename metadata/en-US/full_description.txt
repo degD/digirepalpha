@@ -1,0 +1,38 @@
+<p>
+  DigiRep is a simple, offline-first songbook and digital repertoire manager
+  for musicians. Keep lyrics, chord sheets, and song notes organized on your
+  device without an account, subscription, advertisements, or cloud service.
+</p>
+
+<p>
+  Create your personal repertoire, find songs quickly, and edit them in a
+  focused chord-aware text editor. Changes are saved automatically, and your
+  collection stays in local storage.
+</p>
+
+<h2>Features</h2>
+
+<ul>
+  <li>Search songs by title and tags</li>
+  <li>Create, edit, and delete songs</li>
+  <li>Chord-aware editor for lyrics and chord sheets</li>
+  <li>Mark words as chords and display them with distinct styling</li>
+  <li>Transpose chords up or down</li>
+  <li>Adjust the editor font size for comfortable reading</li>
+  <li>Edit song titles and organize songs with tags</li>
+  <li>Automatic saving while you work</li>
+  <li>Light and dark themes</li>
+  <li>Export and import locally</li>
+  <li>Offline operation with no account required</li>
+</ul>
+
+<p>
+  On Android, export a backup through the system share sheet and restore one
+  through the document picker. Keep a backup in your preferred storage service
+  or transfer it to another installation whenever you need to.
+</p>
+
+<p>
+  DigiRep is open source and built to keep your repertoire simple, portable,
+  and under your control.
+</p>

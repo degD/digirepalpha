@@ -200,6 +200,7 @@ field, and case-insensitive tag deduplication.
 
 Restyle.
 
-## v0.13 
+## v0.13 [COMPLETE]
 
-Remove hardcoded songs.
+Remove hardcoded songs. The app starts with an empty song database and no
+longer seeds demo data on first load.

@@ -1,26 +1,17 @@
 import { expect, test } from "@playwright/test";
 import { savedSongs, seedSongs, songLink } from "./support";
 
-test("seeds demo songs once and preserves an explicitly empty database", async ({
-  page,
-}) => {
+test("starts with an empty song database", async ({ page }) => {
   await page.goto("/");
 
   const results = page.getByRole("region", { name: "Song results" });
-  await expect(results.getByRole("link")).toHaveCount(20);
-  await expect.poll(() => savedSongs(page)).toHaveLength(20);
+  await expect(results.getByText("No songs found.")).toBeVisible();
+  await expect(results.getByRole("link")).toHaveCount(0);
+  await expect.poll(() => savedSongs(page)).toEqual([]);
 
   await page.reload();
-  await expect(results.getByRole("link")).toHaveCount(20);
-
-  const emptyPage = await page.context().newPage();
-  await seedSongs(emptyPage, []);
-  await emptyPage.goto("/");
-  await expect(emptyPage.getByText("No songs found.")).toBeVisible();
-  await emptyPage.reload();
-  await expect(emptyPage.getByText("No songs found.")).toBeVisible();
-  await expect.poll(() => savedSongs(emptyPage)).toEqual([]);
-  await emptyPage.close();
+  await expect(results.getByText("No songs found.")).toBeVisible();
+  await expect.poll(() => savedSongs(page)).toEqual([]);
 });
 
 test("searches titles and tags without searching song text", async ({ page }) => {

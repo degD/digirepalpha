@@ -3,7 +3,6 @@ import { describe, it } from "node:test";
 import {
   createSong,
   deleteSong,
-  initializeSongData,
   loadSongData,
   normalizeSongTags,
   saveSongData,
@@ -122,20 +121,6 @@ describe("song data storage", () => {
     };
 
     assert.throws(() => saveSongData(songs, storage), /Write failed/);
-  });
-
-  it("seeds a missing database once", () => {
-    const storage = createStorage();
-
-    assert.deepEqual(initializeSongData(songs, storage), songs);
-    assert.deepEqual(loadSongData(storage), songs);
-  });
-
-  it("preserves an existing database during initialization", () => {
-    const storage = createStorage(JSON.stringify([]));
-
-    assert.deepEqual(initializeSongData(songs, storage), []);
-    assert.deepEqual(loadSongData(storage), []);
   });
 
   it("updates only the selected song text", () => {

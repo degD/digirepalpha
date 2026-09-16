@@ -16,10 +16,3 @@ test("shows a missing-song state for a valid route absent from storage", async (
   expect(response?.status()).toBe(200);
   await expect(page.getByText("Song not found.")).toBeVisible();
 });
-
-test("initializes demo data when a valid editor route opens first", async ({ page }) => {
-  await page.goto("/editor/?id=1");
-
-  await expect(page.getByRole("heading")).toBeVisible();
-  await expect(page.getByRole("textbox", { name: "Song text" })).toBeVisible();
-});

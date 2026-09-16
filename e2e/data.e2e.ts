@@ -31,7 +31,7 @@ test("exports the current song database and reports download status", async ({ p
   await expect(page.getByRole("status")).toHaveText("Backup download started.");
 });
 
-test("exports an empty database without initializing demo songs", async ({ page }) => {
+test("exports an empty database", async ({ page }) => {
   await seedSongs(page, []);
   await page.goto("/data");
 

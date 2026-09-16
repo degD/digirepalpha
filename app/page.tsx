@@ -9,11 +9,10 @@ import {
 } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { demoSongData } from "../lib/demo-song-data";
 import {
   createSong,
   deleteSong,
-  initializeSongData,
+  loadSongData,
   normalizeSongTags,
   saveSongData,
   type SongData,
@@ -122,7 +121,7 @@ export default function Home() {
 
     void Promise.resolve().then(() => {
       if (!cancelled) {
-        setSongData(initializeSongData(demoSongData));
+        setSongData(loadSongData());
       }
     });
 

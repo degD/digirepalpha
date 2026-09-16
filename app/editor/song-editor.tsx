@@ -6,10 +6,9 @@ import { EditorView, keymap } from "@codemirror/view";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { chordEditor, chordProtectedEditing } from "../../lib/chord-editor";
 import { chordifySelection, transposeSongChords } from "../../lib/chord-format";
-import { demoSongData } from "../../lib/demo-song-data";
 import { longPressWordSelection } from "../../lib/long-press-selection";
 import {
-  initializeSongData,
+  loadSongData,
   normalizeSongTags,
   saveSongData,
   type SongItem,
@@ -149,7 +148,7 @@ export function SongEditor({ songId }: { songId: number }) {
     void Promise.resolve().then(() => {
       if (!cancelled) {
         const loadedSong =
-          initializeSongData(demoSongData).find((item) => item.id === songId) ?? null;
+          loadSongData().find((item) => item.id === songId) ?? null;
 
         setSong(loadedSong);
         setInitialSongText(loadedSong?.song);
@@ -183,7 +182,7 @@ export function SongEditor({ songId }: { songId: number }) {
               return;
             }
 
-            const currentSongData = initializeSongData(demoSongData);
+            const currentSongData = loadSongData();
             saveSongData(
               updateSongText(currentSongData, songId, update.state.doc.toString()),
             );
@@ -271,7 +270,7 @@ export function SongEditor({ songId }: { songId: number }) {
       return;
     }
 
-    const songData = initializeSongData(demoSongData);
+    const songData = loadSongData();
 
     setTitleDraft(song.title);
     setSelectedTags(normalizeSongTags(song.tags));
@@ -292,7 +291,7 @@ export function SongEditor({ songId }: { songId: number }) {
     event.preventDefault();
 
     try {
-      const currentSongData = initializeSongData(demoSongData);
+      const currentSongData = loadSongData();
       const updatedSongData = updateSongMetadata(
         currentSongData,
         songId,

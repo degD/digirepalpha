@@ -19,12 +19,13 @@ import {
 } from "../lib/song-data";
 import { searchSongs } from "../lib/song-search";
 import { tagClassName } from "../lib/tag-style";
+import { ThemeToggle } from "./theme-toggle";
 
 function BrandMark() {
   return (
     <svg
       aria-hidden="true"
-      className="h-6 w-6 text-indigo-600"
+      className="h-6 w-6 text-indigo-600 dark:text-indigo-400"
       fill="currentColor"
       viewBox="0 0 24 24"
     >
@@ -41,7 +42,7 @@ function SearchIcon() {
   return (
     <svg
       aria-hidden="true"
-      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400"
+      className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400 dark:text-zinc-500"
       fill="none"
       stroke="currentColor"
       strokeLinecap="round"
@@ -219,8 +220,8 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col bg-zinc-50 text-zinc-950">
-      <header className="shrink-0 border-b border-zinc-100 bg-white">
+    <main className="flex min-h-0 flex-1 flex-col bg-zinc-50 text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
+      <header className="shrink-0 border-b border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
         <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             <BrandMark />
@@ -232,7 +233,7 @@ export default function Home() {
             </label>
             <SearchIcon />
             <input
-              className="h-10 w-full rounded-xl border border-zinc-200 bg-zinc-50 pl-9 pr-3 text-sm outline-none transition focus:border-indigo-400 focus:bg-white"
+              className="h-10 w-full rounded-xl border border-zinc-200 bg-zinc-50 pl-9 pr-3 text-sm outline-none transition focus:border-indigo-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-indigo-400 dark:focus:bg-zinc-800"
               id="song-search"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search titles and tags..."
@@ -250,12 +251,13 @@ export default function Home() {
               New Song
             </button>
             <Link
-              className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 sm:flex-none"
+              className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 sm:flex-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 dark:focus:outline-zinc-100"
               href="/data"
             >
               <ChartIcon />
               Data
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -263,22 +265,22 @@ export default function Home() {
         aria-label="Song results"
         className="mx-auto min-h-0 w-full max-w-5xl flex-1 overflow-y-auto px-4 py-6"
       >
-        <div className="rounded-2xl border border-zinc-100 bg-white p-5 shadow-sm sm:p-6">
+        <div className="rounded-2xl border border-zinc-100 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="flex items-end justify-between gap-3">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Songs</h1>
-              <p className="text-sm text-zinc-500">Your repertoire at a glance</p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Your repertoire at a glance</p>
             </div>
-            <p className="text-sm text-zinc-500">{songCountLabel}</p>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">{songCountLabel}</p>
           </div>
           {matchingSongs.length === 0 ? (
-            <p className="mt-4 text-sm text-zinc-600">No songs found.</p>
+            <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">No songs found.</p>
           ) : (
             <ul className="mt-3 divide-y divide-zinc-100">
               {matchingSongs.map((song) => (
                 <li className="flex items-center gap-2" key={song.id}>
                   <Link
-                    className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 rounded-lg px-2 py-3 outline-none transition hover:bg-zinc-50 focus:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                    className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 rounded-lg px-2 py-3 outline-none transition hover:bg-zinc-50 focus:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800 dark:focus:outline-zinc-100"
                     href={`/editor/?id=${song.id}`}
                     onClick={handleSongClick}
                     onContextMenu={(event) => handleSongContextMenu(event, song.id)}
@@ -299,7 +301,7 @@ export default function Home() {
                   </Link>
                   {selectedSongId === song.id && (
                     <button
-                      className="h-10 shrink-0 rounded-xl border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus:outline-2 focus:outline-offset-2 focus:outline-red-600"
+                      className="h-10 shrink-0 rounded-xl border border-red-200 bg-red-50 px-3 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus:outline-2 focus:outline-offset-2 focus:outline-red-600 dark:border-red-900 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900"
                       onClick={() => handleSongDelete(song.id)}
                       type="button"
                     >
@@ -316,11 +318,11 @@ export default function Home() {
         <div
           aria-labelledby="add-song-title"
           aria-modal="true"
-          className="fixed inset-0 z-10 flex items-end bg-black/40 sm:items-center sm:justify-center sm:p-4"
+          className="fixed inset-0 z-10 flex items-end bg-black/40 sm:items-center sm:justify-center sm:p-4 dark:bg-black/60"
           role="dialog"
         >
           <form
-            className="w-full max-w-lg rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
+            className="w-full max-w-lg rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl dark:bg-zinc-900"
             onSubmit={handleCreateSong}
           >
             <div className="flex items-start justify-between gap-3">
@@ -329,7 +331,7 @@ export default function Home() {
               </h2>
               <button
                 aria-label="Close"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-800 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 dark:focus:outline-zinc-100"
                 onClick={() => setIsAddingSong(false)}
                 type="button"
               >
@@ -337,27 +339,27 @@ export default function Home() {
               </button>
             </div>
             <label
-              className="mt-5 block text-sm font-medium text-zinc-700"
+              className="mt-5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
               htmlFor="new-song-title"
             >
               Song title
             </label>
             <input
               autoFocus
-              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:ring-indigo-900"
               id="new-song-title"
               onChange={(event) => setNewSongTitle(event.target.value)}
               placeholder="Enter song title..."
               value={newSongTitle}
             />
             <label
-              className="mt-5 block text-sm font-medium text-zinc-700"
+              className="mt-5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
               htmlFor="new-song-tag-select"
             >
               Tags
             </label>
             <select
-              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
               id="new-song-tag-select"
               onChange={(event) => {
                 if (event.target.value) {
@@ -382,7 +384,7 @@ export default function Home() {
                   <li key={tag}>
                     <button
                       aria-label={`Remove ${tag}`}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:focus:outline-zinc-100`}
                       onClick={() =>
                         setNewSongTags((tags) => tags.filter((item) => item !== tag))
                       }
@@ -398,7 +400,7 @@ export default function Home() {
             <div className="mt-5 flex gap-2">
               <input
                 aria-label="Or add a new tag"
-                className="h-11 min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                className="h-11 min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:ring-indigo-900"
                 id="new-song-tag-input"
                 onChange={(event) => setNewSongTagInput(event.target.value)}
                 placeholder="Or add a new tag..."
@@ -406,7 +408,7 @@ export default function Home() {
               />
               <button
                 aria-label="Add tag"
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
                 onClick={handleAddNewSongTag}
                 type="button"
               >
@@ -414,13 +416,13 @@ export default function Home() {
               </button>
             </div>
             {newSongError && (
-              <p className="mt-3 text-sm text-red-700" role="alert">
+              <p className="mt-3 text-sm text-red-700 dark:text-red-300" role="alert">
                 {newSongError}
               </p>
             )}
             <div className="mt-6 flex justify-end gap-2">
               <button
-                className="h-10 rounded-lg bg-zinc-100 px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-200 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                className="h-10 rounded-lg bg-zinc-100 px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-200 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 dark:focus:outline-zinc-100"
                 onClick={() => setIsAddingSong(false)}
                 type="button"
               >

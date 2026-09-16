@@ -10,7 +10,7 @@ import {
 import { exportSongDataBackup } from "../../lib/song-data-export";
 
 const actionButtonClassName =
-  "inline-flex h-11 items-center gap-2 rounded-xl bg-indigo-50 px-4 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600";
+  "inline-flex h-11 items-center gap-2 rounded-xl bg-indigo-50 px-4 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900";
 
 function DownloadIcon({ className = "h-6 w-6" }: { className?: string }) {
   return (
@@ -107,13 +107,13 @@ export function DataManager() {
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
-        <span className="text-zinc-800">
+      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="text-zinc-800 dark:text-zinc-100">
           <DownloadIcon />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="font-semibold">Export</h2>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             Export all songs as a db.songs backup file.
           </p>
         </div>
@@ -126,13 +126,13 @@ export function DataManager() {
           Export database
         </button>
       </section>
-      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
-        <span className="text-zinc-800">
+      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="text-zinc-800 dark:text-zinc-100">
           <UploadIcon />
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="font-semibold">Import</h2>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
             Import a backup file to replace your current song database.
           </p>
         </div>
@@ -152,13 +152,13 @@ export function DataManager() {
               type="file"
             />
           </label>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             {selectedFileName || "No file selected."}
           </p>
         </div>
       </section>
       {status && (
-        <p aria-live="polite" className="text-sm text-zinc-600" role="status">
+        <p aria-live="polite" className="text-sm text-zinc-600 dark:text-zinc-400" role="status">
           {status}
         </p>
       )}

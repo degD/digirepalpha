@@ -18,14 +18,16 @@ import {
 import { tagClassName } from "../../lib/tag-style";
 
 const toolButtonClassName =
-  "inline-flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 disabled:cursor-not-allowed disabled:opacity-40";
+  "inline-flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 dark:focus:outline-zinc-100";
 
 function editorTheme(fontSize: number) {
   return EditorView.theme({
     "&": {
       flex: "1 1 auto",
       minHeight: "0",
-      border: "1px solid var(--color-zinc-200)",
+      backgroundColor: "var(--editor-bg)",
+      color: "var(--editor-fg)",
+      border: "1px solid var(--editor-border)",
       borderRadius: "0.75rem",
       overflow: "hidden",
     },
@@ -37,6 +39,7 @@ function editorTheme(fontSize: number) {
       padding: "1rem",
       fontFamily: "inherit",
       fontSize: `${fontSize}px`,
+      caretColor: "var(--editor-fg)",
     },
     ".cm-scroller": {
       flex: "1 1 0%",
@@ -44,7 +47,13 @@ function editorTheme(fontSize: number) {
       fontFamily: "inherit",
       overflow: "auto",
     },
-    ".digirep-chord": { color: "#7c3aed", fontWeight: "600" },
+    ".cm-selectionBackground": {
+      backgroundColor: "var(--editor-selection)",
+    },
+    ".cm-content ::selection": {
+      backgroundColor: "var(--editor-selection)",
+    },
+    ".digirep-chord": { color: "var(--chord-color)", fontWeight: "600" },
   });
 }
 
@@ -87,7 +96,7 @@ function ChordifyIcon() {
 
 function FontSizeIcon({ direction }: { direction: "up" | "down" }) {
   return (
-    <span aria-hidden="true" className="flex items-center text-zinc-700">
+    <span aria-hidden="true" className="flex items-center text-zinc-700 dark:text-zinc-200">
       <span className="text-base font-bold leading-none">A</span>
       <span className="ml-0.5 text-xs font-bold leading-none">
         {direction === "up" ? "+" : "−"}
@@ -315,11 +324,11 @@ export function SongEditor({ songId }: { songId: number }) {
   }
 
   if (song === undefined) {
-    return <p className="text-sm text-zinc-600">Loading song...</p>;
+    return <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading song...</p>;
   }
 
   if (song === null) {
-    return <p className="text-sm text-zinc-600">Song not found.</p>;
+    return <p className="text-sm text-zinc-600 dark:text-zinc-400">Song not found.</p>;
   }
 
   const tags = normalizeSongTags(song.tags);
@@ -344,7 +353,7 @@ export function SongEditor({ songId }: { songId: number }) {
           )}
         </div>
         <button
-          className="h-10 shrink-0 rounded-lg border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+          className="h-10 shrink-0 rounded-lg border border-zinc-200 bg-white px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800 dark:focus:outline-zinc-100"
           onClick={handleEditMetadata}
           type="button"
         >
@@ -400,11 +409,11 @@ export function SongEditor({ songId }: { songId: number }) {
         <div
           aria-labelledby="edit-song-details-title"
           aria-modal="true"
-          className="fixed inset-0 z-10 flex items-end bg-black/40 sm:items-center sm:justify-center sm:p-4"
+          className="fixed inset-0 z-10 flex items-end bg-black/40 sm:items-center sm:justify-center sm:p-4 dark:bg-black/60"
           role="dialog"
         >
           <form
-            className="w-full max-w-xl rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl"
+            className="w-full max-w-xl rounded-t-2xl bg-white p-6 shadow-xl sm:rounded-2xl dark:bg-zinc-900"
             onSubmit={handleSaveMetadata}
           >
             <div className="flex items-start justify-between gap-3">
@@ -412,7 +421,7 @@ export function SongEditor({ songId }: { songId: number }) {
                 Edit song details
               </h2>
               <button
-                className="h-10 shrink-0 rounded-lg bg-zinc-100 px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-200 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950"
+                className="h-10 shrink-0 rounded-lg bg-zinc-100 px-4 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-200 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 dark:focus:outline-zinc-100"
                 onClick={() => setIsEditingMetadata(false)}
                 type="button"
               >
@@ -420,25 +429,25 @@ export function SongEditor({ songId }: { songId: number }) {
               </button>
             </div>
             <label
-              className="mt-5 block text-sm font-medium text-zinc-700"
+              className="mt-5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
               htmlFor="song-title"
             >
               Title
             </label>
             <input
-              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
               id="song-title"
               onChange={(event) => setTitleDraft(event.target.value)}
               value={titleDraft}
             />
             <label
-              className="mt-5 block text-sm font-medium text-zinc-700"
+              className="mt-5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
               htmlFor="song-tag-select"
             >
               Tags
             </label>
             <select
-              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
               id="song-tag-select"
               onChange={(event) => {
                 if (event.target.value) {
@@ -463,7 +472,7 @@ export function SongEditor({ songId }: { songId: number }) {
                   <li key={tag}>
                     <button
                       aria-label={`Remove ${tag}`}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} transition focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950`}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm font-medium ${tagClassName(tag)} transition focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:focus:outline-zinc-100`}
                       onClick={() =>
                         setSelectedTags((tags) => tags.filter((item) => item !== tag))
                       }
@@ -477,14 +486,14 @@ export function SongEditor({ songId }: { songId: number }) {
               </ul>
             )}
             <label
-              className="mt-5 block text-sm font-medium text-zinc-700"
+              className="mt-5 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
               htmlFor="new-song-tag"
             >
               Add new tag
             </label>
             <div className="mt-2 flex gap-2">
               <input
-                className="h-11 min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                className="h-11 min-w-0 flex-1 rounded-lg border border-zinc-200 px-3 text-sm outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:ring-indigo-900"
                 id="new-song-tag"
                 onChange={(event) => setNewTag(event.target.value)}
                 placeholder="Enter a tag name..."
@@ -492,7 +501,7 @@ export function SongEditor({ songId }: { songId: number }) {
               />
               <button
                 aria-label="Add"
-                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900"
                 onClick={handleAddTag}
                 type="button"
               >
@@ -500,11 +509,11 @@ export function SongEditor({ songId }: { songId: number }) {
               </button>
             </div>
             {metadataError && (
-              <p className="mt-3 text-sm text-red-700" role="alert">
+              <p className="mt-3 text-sm text-red-700 dark:text-red-300" role="alert">
                 {metadataError}
               </p>
             )}
-            <div className="mt-5 border-t border-zinc-100 pt-5">
+            <div className="mt-5 border-t border-zinc-100 pt-5 dark:border-zinc-800">
               <button
                 className="h-11 rounded-lg bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
                 type="submit"

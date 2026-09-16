@@ -3,7 +3,7 @@ import Link from "next/link";
 export function BackLink() {
   return (
     <Link
-      className="inline-flex w-fit items-center gap-1.5 rounded-lg font-medium text-indigo-600 transition hover:text-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600"
+      className="inline-flex w-fit items-center gap-1.5 rounded-lg font-medium text-indigo-600 transition hover:text-indigo-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300"
       href="/"
     >
       <svg

@@ -8,7 +8,7 @@ export function EditorRoute() {
   const songId = Number(searchParams.get("id"));
 
   if (!Number.isSafeInteger(songId) || songId < 1) {
-    return <p className="text-sm text-zinc-600">Invalid song.</p>;
+    return <p className="text-sm text-zinc-600 dark:text-zinc-400">Invalid song.</p>;
   }
 
   return <SongEditor songId={songId} />;

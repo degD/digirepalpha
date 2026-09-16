@@ -204,3 +204,7 @@ Restyle.
 
 Remove hardcoded songs. The app starts with an empty song database and no
 longer seeds demo data on first load.
+
+## v0.14
+
+Add manual colorscheme toggle. Get app ready for release. Assets, icons, etc.

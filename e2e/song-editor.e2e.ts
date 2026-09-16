@@ -295,7 +295,7 @@ test("selects words in chord-decorated lines", async ({ page }) => {
   await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "<Em>hold X" });
 });
 
-test("ignores touch pointers so native long-press selection is kept", async ({
+test("selects a word under a touch long press", async ({
   page,
 }) => {
   await seedSongs(page, [
@@ -325,9 +325,39 @@ test("ignores touch pointers so native long-press selection is kept", async ({
   await page.waitForTimeout(600);
 
   await page.keyboard.type("X");
-  await expect.poll(async () => (await savedSong(page, 1))?.song).toBe(
-    "quick brown foxX",
-  );
+  await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "quick X fox" });
+});
+
+test("selects the whole chord when long-pressing a slash", async ({ page }) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "<C/Am>" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  const { x, y } = await wordCenter(page, "/");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+
+  await page.keyboard.type("X");
+  await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "<X>" });
+});
+
+test("includes punctuation in the long-press selection", async ({ page }) => {
+  await seedSongs(page, [
+    { id: 1, title: "Test Song", tags: [], song: "So, so" },
+  ]);
+  await page.goto("/editor/?id=1");
+
+  const { x, y } = await wordCenter(page, ",");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.up();
+
+  await page.keyboard.type("X");
+  await expect.poll(() => savedSong(page, 1)).toMatchObject({ song: "X so" });
 });
 
 test("requires a non-empty title when editing song metadata", async ({ page }) => {

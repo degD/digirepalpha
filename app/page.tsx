@@ -20,6 +20,7 @@ import {
 import { searchSongs } from "../lib/song-search";
 import { tagClassName } from "../lib/tag-style";
 import { BrandMark } from "./brand-mark";
+import { TagSelect } from "./tag-select";
 import { ThemeToggle } from "./theme-toggle";
 
 function SearchIcon() {
@@ -96,7 +97,6 @@ export default function Home() {
   const [newSongTags, setNewSongTags] = useState<string[]>([]);
   const [newSongTagInput, setNewSongTagInput] = useState("");
   const [newSongTagOptions, setNewSongTagOptions] = useState<string[]>([]);
-  const [newSongTagSelectKey, setNewSongTagSelectKey] = useState(0);
   const [newSongError, setNewSongError] = useState("");
   const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressLinkClickRef = useRef(false);
@@ -345,29 +345,14 @@ export default function Home() {
             >
               Tags
             </label>
-            <select
-              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
-              defaultValue=""
+            <TagSelect
               id="new-song-tag-select"
-              key={newSongTagSelectKey}
-              onChange={(event) => {
-                const tag = event.target.value;
-
-                if (!tag) {
-                  return;
-                }
-
-                setNewSongTags((tags) => normalizeSongTags([...tags, tag]));
-                setNewSongTagSelectKey((key) => key + 1);
-              }}
-            >
-              <option value="">Select existing tag</option>
-              {newSongTagOptions.map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </select>
+              label="Select existing tag"
+              onSelect={(tag) =>
+                setNewSongTags((tags) => normalizeSongTags([...tags, tag]))
+              }
+              options={newSongTagOptions}
+            />
             {newSongTags.length > 0 && (
               <ul aria-label="Selected tags" className="mt-3 flex flex-wrap gap-2">
                 {newSongTags.map((tag) => (

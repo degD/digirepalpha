@@ -202,7 +202,8 @@ test("edits song metadata without replacing editor text or undo history", async 
   await page.getByRole("button", { name: "Edit" }).click();
   const dialog = page.getByRole("dialog", { name: "Edit song details" });
   await dialog.getByLabel("Title").fill("  Updated Song  ");
-  await dialog.getByLabel("Tags", { exact: true }).selectOption("jazz");
+  await dialog.getByLabel("Tags", { exact: true }).click();
+  await dialog.getByRole("option", { name: "jazz" }).click();
   await dialog.getByLabel("Add new tag").fill(" Live ");
   await dialog.getByRole("button", { name: "Add" }).click();
   await dialog.getByLabel("Add new tag").fill("live");

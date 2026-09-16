@@ -44,3 +44,30 @@ test("applies the saved color scheme on other pages", async ({ page }) => {
   await expect(page.locator("html")).toHaveClass(/dark/);
   await expect(page.getByRole("heading", { name: "Night Song" })).toBeVisible();
 });
+
+test("keeps the tag dropdown on the manual theme when the system scheme differs", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await seedSongs(page, [
+    { id: 1, title: "Existing", tags: ["rock"], song: "" },
+  ]);
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "New Song" }).click();
+  const dialog = page.getByRole("dialog", { name: "Add new song" });
+  await dialog.getByLabel("Tags", { exact: true }).click();
+  await expect(dialog.getByRole("listbox")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+
+  await dialog.getByRole("button", { name: "Cancel" }).click();
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await page.getByRole("button", { name: "New Song" }).click();
+  await dialog.getByLabel("Tags", { exact: true }).click();
+  await expect(dialog.getByRole("listbox")).not.toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+});

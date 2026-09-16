@@ -16,6 +16,7 @@ import {
   updateSongText,
 } from "../../lib/song-data";
 import { tagClassName } from "../../lib/tag-style";
+import { TagSelect } from "../tag-select";
 
 const toolButtonClassName =
   "inline-flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 dark:focus:outline-zinc-100";
@@ -149,7 +150,6 @@ export function SongEditor({ songId }: { songId: number }) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [tagOptions, setTagOptions] = useState<string[]>([]);
-  const [tagSelectKey, setTagSelectKey] = useState(0);
   const [metadataError, setMetadataError] = useState("");
 
   useEffect(() => {
@@ -286,7 +286,6 @@ export function SongEditor({ songId }: { songId: number }) {
     setSelectedTags(normalizeSongTags(song.tags));
     setNewTag("");
     setTagOptions(normalizeSongTags(songData.flatMap((item) => item.tags)));
-    setTagSelectKey((key) => key + 1);
     setMetadataError("");
     setIsEditingMetadata(true);
   }
@@ -448,29 +447,14 @@ export function SongEditor({ songId }: { songId: number }) {
             >
               Tags
             </label>
-            <select
-              className="mt-2 h-11 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:ring-indigo-900"
-              defaultValue=""
+            <TagSelect
               id="song-tag-select"
-              key={tagSelectKey}
-              onChange={(event) => {
-                const tag = event.target.value;
-
-                if (!tag) {
-                  return;
-                }
-
-                setSelectedTags((tags) => normalizeSongTags([...tags, tag]));
-                setTagSelectKey((key) => key + 1);
-              }}
-            >
-              <option value="">Select an existing tag</option>
-              {tagOptions.map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag}
-                </option>
-              ))}
-            </select>
+              label="Select an existing tag"
+              onSelect={(tag) =>
+                setSelectedTags((tags) => normalizeSongTags([...tags, tag]))
+              }
+              options={tagOptions}
+            />
             {selectedTags.length > 0 && (
               <ul className="mt-3 flex flex-wrap gap-2" aria-label="Current selected tags">
                 {selectedTags.map((tag) => (

@@ -48,9 +48,11 @@ test("adds an existing tag when selected in the new song dialog", async ({
   await page.getByRole("button", { name: "New Song" }).click();
   const addDialog = page.getByRole("dialog", { name: "Add new song" });
   await addDialog.getByLabel("Song title").fill("Tagged Song");
-  await addDialog.getByLabel("Tags", { exact: true }).selectOption("rock");
+  await addDialog.getByLabel("Tags", { exact: true }).click();
+  await addDialog.getByRole("option", { name: "rock" }).click();
   await expect(addDialog.getByRole("button", { name: "Remove rock" })).toBeVisible();
-  await addDialog.getByLabel("Tags", { exact: true }).selectOption("blues");
+  await addDialog.getByLabel("Tags", { exact: true }).click();
+  await addDialog.getByRole("option", { name: "blues" }).click();
   await expect(addDialog.getByRole("button", { name: "Remove blues" })).toBeVisible();
   await addDialog.getByRole("button", { name: "Add", exact: true }).click();
 

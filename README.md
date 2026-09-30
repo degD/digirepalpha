@@ -12,7 +12,7 @@ Digital repertoire manager built with Next.js, CodeMirror, and browser-local sto
 
 ## Google Play Store
 
-The Google Play release is a paid distribution of the same MIT app. The
+The Google Play release is a paid distribution of the same app. The
 GitHub version remains free, and the corresponding source code for
 the Play release is available in this repository.
 

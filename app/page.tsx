@@ -19,6 +19,7 @@ import {
 } from "../lib/song-data";
 import { searchSongs } from "../lib/song-search";
 import { tagClassName } from "../lib/tag-style";
+import packageJson from "../package.json";
 import { BrandMark } from "./brand-mark";
 import { TagSelect } from "./tag-select";
 import { ThemeToggle } from "./theme-toggle";
@@ -301,6 +302,28 @@ export default function Home() {
           )}
         </div>
       </section>
+      <footer className="shrink-0 border-t border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mx-auto flex max-w-5xl flex-row flex-wrap items-center justify-center gap-x-2 gap-y-1 whitespace-nowrap px-4 py-4 text-center text-xs text-zinc-500 dark:text-zinc-400">
+          <span>
+            {packageJson.name === "digirepalpha" ? "DigiRep" : packageJson.name} v
+            {packageJson.version}
+          </span>
+          <span aria-hidden="true">·</span>
+          <a
+            className="rounded underline-offset-2 hover:underline focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:focus:outline-zinc-100"
+            href="https://github.com/degD/digirepalpha/blob/main/LICENSE"
+          >
+            License
+          </a>
+          <span aria-hidden="true">·</span>
+          <a
+            className="rounded underline-offset-2 hover:underline focus:outline-2 focus:outline-offset-2 focus:outline-zinc-950 dark:focus:outline-zinc-100"
+            href="https://github.com/degD/digirepalpha"
+          >
+            Source
+          </a>
+        </div>
+      </footer>
       {isAddingSong && (
         <div
           aria-labelledby="add-song-title"

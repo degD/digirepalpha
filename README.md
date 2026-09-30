@@ -10,6 +10,14 @@ Digital repertoire manager built with Next.js, CodeMirror, and browser-local sto
 ![](./metadata/en-US/images/phoneScreenshots/4.png)
 ![](./metadata/en-US/images/phoneScreenshots/5.png)
 
+## Google Play Store
+
+The Google Play release is a paid distribution of the same MIT app. The
+GitHub version remains free, and the corresponding source code for
+the Play release is available in this repository.
+
+See the [privacy policy](https://degd.github.io/privacypolicies/digirepalpha/).
+
 ## Setup
 
 This project uses Bun `1.3.14` (see `package.json`). Install dependencies before

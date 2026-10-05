@@ -144,7 +144,7 @@ export function DataManager() {
             Choose file
             <input
               aria-label="Choose a song database backup"
-              accept=".songs,application/json"
+              accept="*/*"
               className="sr-only"
               disabled={isImporting}
               onChange={handleImport}

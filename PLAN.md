@@ -205,6 +205,10 @@ Restyle.
 Remove hardcoded songs. The app starts with an empty song database and no
 longer seeds demo data on first load.
 
-## v0.14
+## v0.14 [COMPLETE]
 
 Add manual colorscheme toggle. Get app ready for release. Assets, icons, etc.
+
+## v0.15 [COMPLETE]
+
+Fix bugs. Add data deletion button. Fix Android file accept. Sort songs.

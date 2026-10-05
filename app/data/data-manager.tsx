@@ -12,6 +12,9 @@ import { exportSongDataBackup } from "../../lib/song-data-export";
 const actionButtonClassName =
   "inline-flex h-11 items-center gap-2 rounded-xl bg-indigo-50 px-4 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900";
 
+const deleteActionButtonClassName =
+  "inline-flex h-11 items-center gap-2 rounded-xl bg-red-50 px-4 text-sm font-semibold text-red-600 transition hover:bg-red-100 focus:outline-2 focus:outline-offset-2 focus:outline-red-600 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900";
+
 function DownloadIcon({ className = "h-6 w-6" }: { className?: string }) {
   return (
     <svg
@@ -50,6 +53,26 @@ function UploadIcon({ className = "h-6 w-6" }: { className?: string }) {
   );
 }
 
+function TrashIcon({ className = "h-6 w-6" }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M4 7h16" />
+      <path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+      <path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" />
+      <path d="M10 11v6M14 11v6" />
+    </svg>
+  );
+}
+
 export function DataManager() {
   const [status, setStatus] = useState("");
   const [isImporting, setIsImporting] = useState(false);
@@ -64,6 +87,28 @@ export function DataManager() {
     } catch {
       setStatus("Could not export the song database.");
     }
+  }
+
+  function handleDeleteAll() {
+    const songData = loadSongData();
+    const songCount = songData.length;
+
+    if (songCount === 0) {
+      setStatus("No songs to delete.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete all ${songCount} ${songCount === 1 ? "song" : "songs"}? This cannot be undone.`,
+    );
+
+    if (!confirmed) {
+      setStatus("Delete cancelled.");
+      return;
+    }
+
+    saveSongData([]);
+    setStatus("Deleted all songs.");
   }
 
   async function handleImport(event: ChangeEvent<HTMLInputElement>) {
@@ -156,6 +201,25 @@ export function DataManager() {
             {selectedFileName || "No file selected."}
           </p>
         </div>
+      </section>
+      <section className="flex items-center gap-4 rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <span className="text-zinc-800 dark:text-zinc-100">
+          <TrashIcon />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="font-semibold">Delete</h2>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Delete all songs from this device. This cannot be undone.
+          </p>
+        </div>
+        <button
+          className={deleteActionButtonClassName}
+          onClick={handleDeleteAll}
+          type="button"
+        >
+          <TrashIcon className="h-4 w-4" />
+          Delete all
+        </button>
       </section>
       {status && (
         <p aria-live="polite" className="text-sm text-zinc-600 dark:text-zinc-400" role="status">

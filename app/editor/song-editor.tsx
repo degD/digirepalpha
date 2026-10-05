@@ -38,14 +38,16 @@ function editorTheme(fontSize: number) {
     },
     ".cm-content": {
       padding: "1rem",
-      fontFamily: "inherit",
+      fontFamily:
+        "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
       fontSize: `${fontSize}px`,
       caretColor: "var(--editor-fg)",
     },
     ".cm-scroller": {
       flex: "1 1 0%",
       minHeight: "0",
-      fontFamily: "inherit",
+      fontFamily:
+        "var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace",
       overflow: "auto",
     },
     ".cm-selectionBackground": {

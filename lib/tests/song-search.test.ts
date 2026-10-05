@@ -10,8 +10,8 @@ const songs: SongData = [
 ];
 
 describe("searchSongs", () => {
-  it("returns all songs for an empty query", () => {
-    assert.deepEqual(searchSongs(songs, ""), songs);
+  it("returns all songs for an empty query in abc order", () => {
+    assert.deepEqual(searchSongs(songs, ""), [songs[1], songs[0], songs[2]]);
   });
 
   it("matches a partial title", () => {
@@ -34,10 +34,14 @@ describe("searchSongs", () => {
     assert.deepEqual(searchSongs(songs, "folk"), []);
   });
 
-  it("preserves database order", () => {
+  it("sorts matches in abc order by title", () => {
     assert.deepEqual(
       searchSongs(songs, "jazz").map((song) => song.id),
       [1, 3],
+    );
+    assert.deepEqual(
+      searchSongs([songs[2], songs[1], songs[0]], "").map((song) => song.id),
+      [2, 1, 3],
     );
   });
 });

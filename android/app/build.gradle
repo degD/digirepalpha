@@ -7,7 +7,7 @@ android {
         applicationId "net.dege.digirep"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 0.15
+        versionCode 15
         versionName "0.15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
